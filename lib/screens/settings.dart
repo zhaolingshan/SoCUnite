@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 //import 'package:SoCUniteTwo/services/auth_service.dart';
+import 'package:SoCUniteTwo/widgets/provider_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 
@@ -10,6 +12,23 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  int karmaPts = 0;
+
+  getKarmaPointsfromPosts() async {
+    final uid = await Provider.of(context).auth.getCurrentUID();
+    await Firestore.instance.collection('users').document(uid).collection('private_forums')
+    .getDocuments().then((querySnapshot) { //list of documents 
+       querySnapshot.documents.forEach((result) async { //each documentid is result 
+       DocumentSnapshot ss = await Firestore.instance.collection('users').document(uid)
+       .collection('private_forums').document(result.documentID).get();
+       int i = ss.data['upvotes'].values.where((e)=> e as bool).size;
+       karmaPts = karmaPts + i;
+    });
+    });
+    print(karmaPts);
+    return karmaPts;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(backgroundColor: Colors.grey[900],
@@ -47,10 +66,7 @@ class _SettingsState extends State<Settings> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             margin: EdgeInsets.all(32),
             color: Colors.grey[850],
-            child: //FutureBuilder(builder: 
-            // ,)
-            
-            
+            child:          
             ListTile(
               title: Text("24 karma points",
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[100], 
@@ -65,6 +81,7 @@ class _SettingsState extends State<Settings> {
               children: <Widget>[
                 ListTile(
               onTap: () { //open to change password
+              getKarmaPointsfromPosts();
                 Navigator.of(context).pushNamed('/passwordchange');
               },
               leading: Icon(Icons.lock, color: Colors.lightBlueAccent[100],),
