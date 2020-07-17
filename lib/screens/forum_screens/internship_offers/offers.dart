@@ -26,7 +26,7 @@ class _OffersState extends State<Offers> {
         print(e);
     });
 
-    final post = new Offer(null,null,null,null,null,null,null,null,null,null,null,null);
+    final post = new Offer(null,null,null,null,null,null,null,null,null,null,null,null,null);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],

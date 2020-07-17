@@ -5,8 +5,7 @@ import 'package:SoCUniteTwo/myPosts/myposts_feedbacks.dart';
 import 'package:flutter/material.dart';
 import 'package:SoCUniteTwo/myPosts/myposts_offer.dart';
 import 'package:SoCUniteTwo/myPosts/myposts_experiences.dart';
-class MyPosts extends StatelessWidget { //display screen for my Posts
-//users can click on respective grids t=which will bring them to their posts in thst category
+class MyPosts extends StatelessWidget { 
   @override
   Widget build(BuildContext context) {
     return Scaffold(

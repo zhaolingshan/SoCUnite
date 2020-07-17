@@ -45,29 +45,161 @@ class _MyjiosListviewScreenState extends State<MyjiosListviewScreen> {
     .collection('my_studyjios').snapshots();
   }
 
+
   Widget buildMyJios(BuildContext context, DocumentSnapshot studyjio) {
     final myJio = Studyjio.fromSnapshot(studyjio);
     return Container(
       child: Builder(
         builder: (context) {
-          return ListTile(
-            title: Text(
-              studyjio['title'],
-              style: TextStyle(color: Colors.blue[300], fontWeight: FontWeight.bold),
+          return Card(
+            color: Colors.grey[850],
+            child: InkWell(
+              onTap: () {
+                /*Navigator.push(context, MaterialPageRoute(
+        builder: (context) => ForumDetails(forum: forum) //with this particular forum 
+                )); */
+              },
+              child: Row(
+                children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 4, bottom: 4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 0, bottom: 0),
+                        child: Row(
+                          children: <Widget>[
+                            SizedBox(width: 20,),
+                            Text(
+                              studyjio['title'], 
+                              style: TextStyle(
+                                fontSize: 17, 
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue[300]
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 0, bottom: 0),
+                        child: Row(
+                          children: <Widget>[
+                            SizedBox(width: 20,),
+                            Text(
+                              studyjio['date'],
+                              style: TextStyle(
+                                fontSize: 14, 
+                                color: Colors.grey[100]
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 0, bottom: 0),
+                        child: Row(
+                          children: <Widget>[
+                            SizedBox(width: 20,),
+                            Text(
+                              studyjio['startTime'] + " to " + studyjio['endTime'],
+                              style: TextStyle(
+                                fontSize: 14, 
+                                color: Colors.grey[100]
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 0, bottom: 0),
+                        child: Row(
+                          children: <Widget>[
+                            SizedBox(width: 20,),
+                            Text(
+                              studyjio['location'],
+                              style: TextStyle(
+                                fontSize: 14, 
+                                color: Colors.grey[100]
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(top: 0, bottom: 0),
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(width: 20,),
+                                Text(
+                                  "Current count: ",
+                                  style: TextStyle(
+                                    fontSize: 14, 
+                                    color: Colors.grey[100]
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 0, bottom: 0),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  studyjio['joinedUsers'].values.where((e)=> e as bool).length.toString(),
+                                  style: TextStyle(
+                                    fontSize: 14, 
+                                    color: Colors.grey[100]
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 0, bottom: 0),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  "/",
+                                  style: TextStyle(
+                                    fontSize: 14, 
+                                    color: Colors.grey[100]
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 0, bottom: 0),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  studyjio['capacity'].toString(),
+                                  style: TextStyle(
+                                    fontSize: 14, 
+                                    color: Colors.grey[100]
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Spacer(),
+                JoinStudyjio(studyjio: myJio),
+                SizedBox(width: 20,),
+                ],
+              ),
             ),
-            subtitle: Text(
-              studyjio['date']
-              + '\n' + studyjio['startTime'] + " to " + studyjio['endTime']
-              + "\n" + studyjio['location'],
-              style: TextStyle( color: Colors.grey[100]),
-            ),
-            trailing: JoinStudyjio(),
-            onTap: () {
-              // go to detail page
-            },
           );
         }
-      ),
+      )
     );
   }
 }

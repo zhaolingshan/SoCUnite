@@ -15,6 +15,8 @@ class PostFeedback {
   String ownerid;
   Map<String, dynamic> saved = {};
   Map<String, dynamic> upvotes = {};
+  Map<String, dynamic> reported = {};
+  
 
   PostFeedback(
     this.yearTaken,
@@ -31,6 +33,7 @@ class PostFeedback {
     this.ownerid,
     this.saved,
     this.upvotes,
+    this.reported,
   );
 
   PostFeedback.fromSnapshot(DocumentSnapshot snapshot) : 

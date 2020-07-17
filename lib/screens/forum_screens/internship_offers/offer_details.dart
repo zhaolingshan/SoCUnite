@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/internship_offers/offer_comments.dart';
 import 'package:flutter/material.dart';
-import 'package:SoCUniteTwo/screens/forum_screens/details/report.dart';
+import 'package:SoCUniteTwo/screens/forum_screens/details/report_offer.dart';
 import 'package:SoCUniteTwo/widgets/provider_widget.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/details/comments.dart';
 
@@ -44,6 +44,7 @@ class _OfferDetailsState extends State<OfferDetails> {
         'contact': widget.offer.contact,
         'upvotes': widget.offer.upvotes,
         'saved': widget.offer.saved,
+        'reported': widget.offer.reported,
       });
       print('added to saved_offers collection');
     } else {
@@ -141,7 +142,7 @@ class _OfferDetailsState extends State<OfferDetails> {
                         icon: Icon(Icons.flag, color: Colors.red, size: 30,), 
                       onPressed: () { //report post
                         Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              MaterialPageRoute(builder: (context) => ReportOffers(post: widget.offer)));
                       },),
                       Column(children: <Widget>[
                         Text('Report', style: TextStyle(color: Colors.grey[100]),),
@@ -396,8 +397,8 @@ class _OfferDetailsState extends State<OfferDetails> {
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 25,), 
                       onPressed: () { //report post
-                        Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              //           Navigator.push(context, 
+              // MaterialPageRoute(builder: (context) => Report()));
                       },),
                       Text("report comment", style: TextStyle(fontSize: 14,
                       decoration: TextDecoration.underline, color: Colors.grey[100]),),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/post_feedback.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:SoCUniteTwo/screens/forum_screens/details/report.dart';
+import 'package:SoCUniteTwo/screens/forum_screens/details/report_feedbacks.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/details/comments.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/details/feedback_comment.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/upvote_feedbacks.dart';
@@ -44,6 +44,7 @@ class _FeedbackDetailsState extends State<FeedbackDetails> {
         'ownerid': widget.feedback.ownerid,
         'upvotes': widget.feedback.upvotes,
         'saved': widget.feedback.saved,
+        'reported': widget.feedback.reported,
       });
       print('added to saved_feedbacks collection');
     } else {
@@ -139,7 +140,7 @@ class _FeedbackDetailsState extends State<FeedbackDetails> {
                         icon: Icon(Icons.flag, color: Colors.red, size: 30,), 
                       onPressed: () { //report post
                         Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              MaterialPageRoute(builder: (context) => ReportFeedbacks(post: widget.feedback)));
                       },),
                       Column(children: <Widget>[
                         Text('Report', style: TextStyle(color: Colors.grey[100]),),
@@ -382,8 +383,8 @@ class _FeedbackDetailsState extends State<FeedbackDetails> {
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 25,), 
                       onPressed: () { //report post
-                        Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              //           Navigator.push(context, 
+              // MaterialPageRoute(builder: (context) => Report()));
                       },),
                       Text("Report comment", style: TextStyle(fontSize: 14,
                       decoration: TextDecoration.underline, color: Colors.grey[100]),),

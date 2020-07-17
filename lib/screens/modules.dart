@@ -23,8 +23,8 @@ class _ModulesState extends State<Modules> {
     TextEditingController _module3Controller = new TextEditingController();
     TextEditingController _module4Controller = new TextEditingController();
     TextEditingController _module5Controller = new TextEditingController();
-    TextEditingController _module6Controller = new TextEditingController();
-    TextEditingController _module7Controller = new TextEditingController();
+    //TextEditingController _module6Controller = new TextEditingController();
+    //TextEditingController _module7Controller = new TextEditingController();
     
   @override
   Widget build(BuildContext context) {
@@ -147,45 +147,45 @@ class _ModulesState extends State<Modules> {
              ),)
           ],),
           SizedBox(height: 10,),
-          Row(children: <Widget>[
-            SizedBox(width: 15,),
-            Text("Module 6", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.grey[100]),),
-            SizedBox(width: 30,),
-            Expanded(child: 
-             TextFormField(
-               style: TextStyle(color: Colors.grey[100]),
-               cursorColor: Colors.tealAccent,
-               controller: _module6Controller,
-               decoration: InputDecoration(
-                 hintStyle: TextStyle(color: Colors.grey[100], fontSize: 15),
-                 hintText: "Eg. CS2030, IS1103, MA1101R",
-               focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.tealAccent,
-                              ),),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[800])),
-             ),
-             ),)
-          ],),
-          SizedBox(height: 10,),
-          Row(children: <Widget>[
-            SizedBox(width: 15,),
-            Text("Module 7", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.grey[100]),),
-            SizedBox(width: 30,),
-            Expanded(child: 
-             TextFormField(
-               style: TextStyle(color: Colors.grey[100]),
-               cursorColor: Colors.tealAccent,
-               controller: _module7Controller,
-               decoration: InputDecoration(
-                 hintStyle: TextStyle(color: Colors.grey[100], fontSize: 15),
-                 hintText: "Eg. CS2030, IS1103, MA1101R",
-               focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.tealAccent,
-                              ),),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[800])),
-             ),
-             ),)
-          ],),  
+          // Row(children: <Widget>[
+          //   SizedBox(width: 15,),
+          //   Text("Module 6", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.grey[100]),),
+          //   SizedBox(width: 30,),
+          //   Expanded(child: 
+          //    TextFormField(
+          //      style: TextStyle(color: Colors.grey[100]),
+          //      cursorColor: Colors.tealAccent,
+          //      controller: _module6Controller,
+          //      decoration: InputDecoration(
+          //        hintStyle: TextStyle(color: Colors.grey[100], fontSize: 15),
+          //        hintText: "Eg. CS2030, IS1103, MA1101R",
+          //      focusedBorder: UnderlineInputBorder(
+          //                     borderSide: BorderSide(color: Colors.tealAccent,
+          //                     ),),
+          //                   enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[800])),
+          //    ),
+          //    ),)
+          // ],),
+          // SizedBox(height: 10,),
+          // Row(children: <Widget>[
+          //   SizedBox(width: 15,),
+          //   Text("Module 7", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.grey[100]),),
+          //   SizedBox(width: 30,),
+          //   Expanded(child: 
+          //    TextFormField(
+          //      style: TextStyle(color: Colors.grey[100]),
+          //      cursorColor: Colors.tealAccent,
+          //      controller: _module7Controller,
+          //      decoration: InputDecoration(
+          //        hintStyle: TextStyle(color: Colors.grey[100], fontSize: 15),
+          //        hintText: "Eg. CS2030, IS1103, MA1101R",
+          //      focusedBorder: UnderlineInputBorder(
+          //                     borderSide: BorderSide(color: Colors.tealAccent,
+          //                     ),),
+          //                   enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[800])),
+          //    ),
+          //    ),)
+          // ],),  
           SizedBox(height: 100,),
           //displayUserModules(context, snapshot),
           RaisedButton(
@@ -194,9 +194,9 @@ class _ModulesState extends State<Modules> {
               module2 = _module2Controller.text;
               module3 = _module3Controller.text;
               module4 = _module4Controller.text;
-              module6 = _module6Controller.text;
+              //module6 = _module6Controller.text;
               module5 = _module5Controller.text;
-              module7 = _module7Controller.text;
+              //module7 = _module7Controller.text;
 
              final uid = await Provider.of(context).auth.getCurrentUID();
 
@@ -207,8 +207,8 @@ class _ModulesState extends State<Modules> {
                         "module3" : _module3Controller.text,
                         "module4" : _module4Controller.text,
                         "module5" : _module5Controller.text,
-                        "module6" : _module6Controller.text,
-                        "module7" : _module7Controller.text,
+                        // "module6" : _module6Controller.text,
+                        // "module7" : _module7Controller.text,
                       }, merge : true).then((_){
                         print("modules upload success!");
                       });

@@ -13,6 +13,7 @@ class Experience {
   String ownerid;
   Map<String, dynamic> saved = {};
   Map<String, dynamic> upvotes = {};
+  Map<String, dynamic> reported = {};
   
 
   Experience(
@@ -28,6 +29,7 @@ class Experience {
     this.ownerid,
     this.saved,
     this.upvotes,
+    this.reported,
   );
 
   Experience.fromSnapshot(DocumentSnapshot snapshot) : 

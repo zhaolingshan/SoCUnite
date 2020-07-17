@@ -148,10 +148,10 @@ class _SavedForumsState extends State<SavedForums> {
                     ],)),
                     SizedBox(height: 20),
                     Row(children: <Widget>[
-                      SizedBox(width: 10,),
-                      Icon(Icons.comment, size: 26,
-                      color: Colors.tealAccent), 
-                      SizedBox(width: 6,),Text('0', style: TextStyle(color: Colors.grey[100]),), //change to icons
+                      // SizedBox(width: 10,),
+                      // Icon(Icons.comment, size: 26,
+                      // color: Colors.tealAccent), 
+                      // SizedBox(width: 6,),Text('0', style: TextStyle(color: Colors.grey[100]),), //change to icons
                       Spacer(),
                       Icon(Icons.thumb_up, size: 26, color: Colors.tealAccent),
                       SizedBox(width: 6,),Text(post['upvotes'].values.where((e)=> e as bool).length.toString(), style: TextStyle(color: Colors.grey[100]),),

@@ -182,10 +182,10 @@ class _SavedCollaborationsState extends State<SavedCollaborations> {
                     ],)),
                     SizedBox(height: 20),
                     Row(children: <Widget>[
-                      SizedBox(width: 10,),
-                      Icon(Icons.comment, size: 26,
-                      color: Colors.tealAccent), 
-                      SizedBox(width: 6,),Text('0', style: TextStyle(color: Colors.grey[100]),), //change to icons
+                      // SizedBox(width: 10,),
+                      // Icon(Icons.comment, size: 26,
+                      // color: Colors.tealAccent), 
+                      // SizedBox(width: 6,),Text('0', style: TextStyle(color: Colors.grey[100]),), //change to icons
                       Spacer(),
                       Icon(Icons.thumb_up, size: 26, color: Colors.tealAccent),
                       SizedBox(width: 6,),

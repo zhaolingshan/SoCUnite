@@ -28,7 +28,7 @@ class _CS2030feedbackState extends State<CS2030feedback> {
         print(e);
     });
 
-    final post = new PostFeedback(null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    final post = new PostFeedback(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
@@ -176,9 +176,9 @@ class _CS2030feedbackState extends State<CS2030feedback> {
                     ],),),
                     SizedBox(height: 20),
                     Row(children: <Widget>[
-                      SizedBox(width: 10,),
-                      Icon(Icons.comment, size: 26, color: Colors.tealAccent), 
-                      SizedBox(width: 6,),Text('0', style: TextStyle(color: Colors.grey[100]),), 
+                      // SizedBox(width: 10,),
+                      // Icon(Icons.comment, size: 26, color: Colors.tealAccent), 
+                      // SizedBox(width: 6,),Text('0', style: TextStyle(color: Colors.grey[100]),), 
                       Spacer(),
                       Icon(Icons.thumb_up, size: 26, color: Colors.tealAccent),
                       SizedBox(width: 6,),

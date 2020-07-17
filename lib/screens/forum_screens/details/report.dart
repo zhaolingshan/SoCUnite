@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/details/report_two.dart';
+import 'package:SoCUniteTwo/screens/forum_screens/post.dart';
+import 'package:SoCUniteTwo/widgets/provider_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Report extends StatefulWidget {
+  final Post post; //forum
+
+  Report({Key key, @required this.post}) : super(key: key);
   @override
   _ReportState createState() => _ReportState();
 }
 
 class _ReportState extends State<Report> {
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,10 +40,11 @@ class _ReportState extends State<Report> {
             padding: EdgeInsets.all(7),
           child:
           Text(
-            "Why are you reporting this post?",
+            "Why are you reporting this post under 'Forums'?",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,
            color: Colors.white),
           textAlign: TextAlign.center,),),
+          SizedBox(height: 10,),
           Text(
             "Please choose the following that applies.",
           style: TextStyle(fontSize: 15,
@@ -46,10 +55,69 @@ class _ReportState extends State<Report> {
               color: Colors.grey[800],
               thickness: 1,),
           ListTile(
-              onTap: () { 
+              onTap: () async { //add into the map uid -> true 
+              final uid = await Provider.of(context).auth.getCurrentUID();
+                widget.post.reported.putIfAbsent(uid, () => true);
+                await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for public 
+
+                await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for private
+
+                await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).setData({
+                        'reported': widget.post.reported, 
+                      }, merge: true).then((_){   //for saved forums 
+                          print("all reported updating done!");
+                        });  
+                      });                   
+                    });
+                  }); 
+                }); 
+
+                DocumentSnapshot doc = await Firestore.instance.collection('public').document('CS2030').
+                collection('Forums').document(widget.post.documentid).get();
+                print(doc.data['reported']);
+                if(doc.data['reported'].length >= 5) {
+                    await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                  .document(widget.post.documentid).delete(); //deleting for public
+
+                  // await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                  // .document(widget.post.documentid).delete(); //deleting for private 
+
+                  await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        if(widget.post.documentid == result.documentID) {
+                          Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).delete();
+                        }                        
+                      });                   
+                    });
+                  }); 
+                }); 
+
+                }
+               
                 Navigator.push(context, MaterialPageRoute(
-              builder: (context) => ReportTwo() //stateful widget
+              builder: (context) => ReportTwo() 
             ));
+
               },
               title: Text("Bullying or harrassment",
                style: TextStyle(fontSize: 19,
@@ -62,7 +130,66 @@ class _ReportState extends State<Report> {
               ListTile(
               subtitle: Text("That was obviously done on purpose.",
               style: TextStyle(fontSize: 14, color: Colors.grey),),
-              onTap: () { 
+              onTap: () async { 
+                final uid = await Provider.of(context).auth.getCurrentUID();
+                widget.post.reported.putIfAbsent(uid, () => true);
+                await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for public 
+
+                await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for private
+
+                await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).setData({
+                        'reported': widget.post.reported, 
+                      }, merge: true).then((_){   //for saved forums 
+                          print("all reported updating done!");
+                        });  
+                      });                   
+                    });
+                  }); 
+                }); 
+
+                DocumentSnapshot doc = await Firestore.instance.collection('public').document('CS2030').
+                collection('Forums').document(widget.post.documentid).get();
+                print(doc.data['reported']);
+                if(doc.data['reported'].length >= 5) {
+                    await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                  .document(widget.post.documentid).delete(); //deleting for public
+
+                  // await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                  // .document(widget.post.documentid).delete(); //deleting for private 
+
+                  await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        if(widget.post.documentid == result.documentID) {
+                          Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).delete();
+                        }                        
+                      });                   
+                    });
+                  }); 
+                }); 
+
+                }
+
+               
                 Navigator.push(context, MaterialPageRoute(
               builder: (context) => ReportTwo() //stateful widget
             ));
@@ -76,7 +203,65 @@ class _ReportState extends State<Report> {
               color: Colors.grey[800],
               thickness: 1,),
               ListTile(
-              onTap: () { 
+              onTap: () async { 
+                final uid = await Provider.of(context).auth.getCurrentUID();
+                widget.post.reported.putIfAbsent(uid, () => true);
+                await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for public 
+
+                await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for public 
+
+                await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).setData({
+                        'reported': widget.post.reported, 
+                      }, merge: true).then((_){   //for saved forums 
+                          print("all reported updating done!");
+                        });  
+                      });                   
+                    });
+                  }); 
+                }); 
+
+                DocumentSnapshot doc = await Firestore.instance.collection('public').document('CS2030').
+                collection('Forums').document(widget.post.documentid).get();
+                print(doc.data['reported']);
+                if(doc.data['reported'].length >= 5) {
+                    await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                  .document(widget.post.documentid).delete(); //deleting for public
+
+                  // await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                  // .document(widget.post.documentid).delete(); //deleting for private 
+
+                  await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        if(widget.post.documentid == result.documentID) {
+                          Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).delete();
+                        }                        
+                      });                   
+                    });
+                  }); 
+                }); 
+
+                }
+
                 Navigator.push(context, MaterialPageRoute(
               builder: (context) => ReportTwo() //stateful widget
             ));
@@ -90,7 +275,64 @@ class _ReportState extends State<Report> {
               color: Colors.grey[800],
               thickness: 1,),
               ListTile(
-              onTap: () { 
+              onTap: () async { 
+                 final uid = await Provider.of(context).auth.getCurrentUID();
+                widget.post.reported.putIfAbsent(uid, () => true);
+                await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for public 
+
+                await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for public 
+
+                await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).setData({
+                        'reported': widget.post.reported, 
+                      }, merge: true).then((_){   //for saved forums 
+                          print("all reported updating done!");
+                        });  
+                      });                   
+                    });
+                  }); 
+                }); 
+
+               DocumentSnapshot doc = await Firestore.instance.collection('public').document('CS2030').
+                collection('Forums').document(widget.post.documentid).get();
+                print(doc.data['reported']);
+                if(doc.data['reported'].length >= 5) {
+                    await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                  .document(widget.post.documentid).delete(); //deleting for public
+
+                  // await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                  // .document(widget.post.documentid).delete(); //deleting for private 
+
+                  await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        if(widget.post.documentid == result.documentID) {
+                          Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).delete();
+                        }                        
+                      });                   
+                    });
+                  }); 
+                }); 
+
+                }
                 Navigator.push(context, MaterialPageRoute(
               builder: (context) => ReportTwo() //stateful widget
             ));
@@ -104,7 +346,64 @@ class _ReportState extends State<Report> {
               color: Colors.grey[800],
               thickness: 1,),
               ListTile(
-              onTap: () { 
+              onTap: () async { 
+                final uid = await Provider.of(context).auth.getCurrentUID();
+                widget.post.reported.putIfAbsent(uid, () => true);
+                await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for public 
+
+                await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for public 
+
+                await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).setData({
+                        'reported': widget.post.reported, 
+                      }, merge: true).then((_){   //for saved forums 
+                          print("all reported updating done!");
+                        });  
+                      });                   
+                    });
+                  }); 
+                }); 
+
+               DocumentSnapshot doc = await Firestore.instance.collection('public').document('CS2030').
+                collection('Forums').document(widget.post.documentid).get();
+                print(doc.data['reported']);
+                if(doc.data['reported'].length >= 5) {
+                    await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                  .document(widget.post.documentid).delete(); //deleting for public
+
+                  // await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                  // .document(widget.post.documentid).delete(); //deleting for private 
+
+                  await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        if(widget.post.documentid == result.documentID) {
+                          Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).delete();
+                        }                        
+                      });                   
+                    });
+                  }); 
+                }); 
+
+                }
                 Navigator.push(context, MaterialPageRoute(
               builder: (context) => ReportTwo() //stateful widget
             ));
@@ -118,7 +417,64 @@ class _ReportState extends State<Report> {
               color: Colors.grey[800],
               thickness: 1,),
               ListTile(
-              onTap: () { 
+              onTap: () async { 
+                 final uid = await Provider.of(context).auth.getCurrentUID();
+                widget.post.reported.putIfAbsent(uid, () => true);
+                await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for public 
+
+                await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                .document(widget.post.documentid).setData({
+                  'reported': widget.post.reported,
+                },merge : true).then((_){
+                print("success!");
+                }); //for public 
+
+                await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).setData({
+                        'reported': widget.post.reported, 
+                      }, merge: true).then((_){   //for saved forums 
+                          print("all reported updating done!");
+                        });  
+                      });                   
+                    });
+                  }); 
+                }); 
+
+                DocumentSnapshot doc = await Firestore.instance.collection('public').document('CS2030').
+                collection('Forums').document(widget.post.documentid).get();
+                print(doc.data['reported']);
+                if(doc.data['reported'].length >= 5) {
+                    await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+                  .document(widget.post.documentid).delete(); //deleting for public
+
+                  // await Firestore.instance.collection('users').document(widget.post.ownerid).collection('private_forums')
+                  // .document(widget.post.documentid).delete(); //deleting for private 
+
+                  await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //element is each uid 
+                    Firestore.instance.collection('users').document(element.documentID)
+                    .collection('saved_forums').getDocuments().then((querySnapshot) { //result is each saved post
+                      querySnapshot.documents.forEach((result) {
+                        if(widget.post.documentid == result.documentID) {
+                          Firestore.instance.collection('users').document(element.documentID)
+                      .collection('saved_forums').document(result.documentID).delete();
+                        }                        
+                      });                   
+                    });
+                  }); 
+                }); 
+
+                }
                 Navigator.push(context, MaterialPageRoute(
               builder: (context) => ReportTwo() //stateful widget
             ));

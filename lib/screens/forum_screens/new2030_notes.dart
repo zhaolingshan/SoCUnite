@@ -268,6 +268,7 @@ class _New2030notesState extends State<New2030notes> {
               widget.post.ownerid = uid;
               widget.post.saved = {uid: false};
               widget.post.upvotes =  {uid: false};
+              widget.post.reported = {uid: false};
 
               final DocumentReference documentReference = 
               await db.collection("public").document('CS2030').
@@ -283,6 +284,7 @@ class _New2030notesState extends State<New2030notes> {
                 'ownerid': widget.post.ownerid,
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
+                'reported': widget.post.reported,
               }
               );
 
@@ -307,6 +309,7 @@ class _New2030notesState extends State<New2030notes> {
                 'ownerid': widget.post.ownerid,
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
+                'reported': widget.post.reported,
               }
               );
 

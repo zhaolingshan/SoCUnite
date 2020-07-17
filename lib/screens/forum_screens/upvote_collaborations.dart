@@ -13,7 +13,7 @@ final Collaboration post;
 }
 
 class _UpvotecollaborationsState extends State<Upvotecollaborations> {
-  bool _isUpvoted = true;
+  bool _isUpvoted = false;
   //int upvoteCount = 0;
   //String _upvote = 'Upvote';
 
@@ -67,9 +67,9 @@ class _UpvotecollaborationsState extends State<Upvotecollaborations> {
                   print("upvote comment successfully saved to firebase!");
                 });     
             },
-            icon: Icon(_isUpvoted ? Icons.exposure_neg_1 : Icons.arrow_upward,
+            icon: Icon(_isUpvoted ? Icons.arrow_upward : Icons.arrow_upward,
              size: 25,
-             color: _isUpvoted ?  Colors.grey[100] : Colors.tealAccent,),),
+             color: _isUpvoted ? Colors.tealAccent : Colors.grey[100],),),
         Text(widget.comment.upvotes.values.where((e)=> e as bool).length.toString(), style: TextStyle(color: Colors.grey[100]),),
       ],
     );

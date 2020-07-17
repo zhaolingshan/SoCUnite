@@ -283,6 +283,7 @@ class _New2030State extends State<New2030> {
               final uid = await Provider.of(context).auth.getCurrentUID();
               widget.post.saved = {uid: false};
               widget.post.upvotes =  {uid: false};
+              widget.post.reported = {uid: false};
               
               widget.post.ownerid = uid;
               
@@ -299,6 +300,7 @@ class _New2030State extends State<New2030> {
                 'ownerid': widget.post.ownerid,
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
+                'reported': widget.post.reported,
               });
 
               final String documentid = documentReference.documentID;
@@ -321,6 +323,7 @@ class _New2030State extends State<New2030> {
                 'ownerid': widget.post.ownerid,
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
+                'reported': widget.post.reported,
               });
               
               Navigator.pop(context);

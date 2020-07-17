@@ -28,7 +28,7 @@ class _CS2030forumState extends State<CS2030forum> {
   //   // });
   // }
 
-
+  
   @override
   Widget build(BuildContext context) {
     
@@ -41,7 +41,7 @@ class _CS2030forumState extends State<CS2030forum> {
         print(e);
     });
 
-    final post = new Post(null,null,null,null,null,null,null,null,null,null); //to appear in CS2030 forum
+    final post = new Post(null,null,null,null,null,null,null,null,null,null,null); //to appear in CS2030 forum
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
@@ -201,10 +201,10 @@ class _CS2030forumState extends State<CS2030forum> {
                     SizedBox(height: 20),
                     Row(children: <Widget>[
                       SizedBox(width: 10,),
-                      Icon(Icons.comment, size: 26,
-                      color: Colors.tealAccent),
-                       SizedBox(width: 6,),
-          //                    FutureBuilder( 
+                      // Icon(Icons.comment, size: 26,
+                      // color: Colors.tealAccent),
+                      //  SizedBox(width: 6,),
+          //    FutureBuilder( 
           //     future: Firestore.instance.collection('public').document('CS2030')
           //     .collection('Forums').document(post['documentid']).collection('comments').get(),
           //     builder: (context, snapshot) {
@@ -218,7 +218,7 @@ class _CS2030forumState extends State<CS2030forum> {
                 
           //     }, 
           // ),      
-                      Text('0', style: TextStyle(color: Colors.grey[100]),), //change to icons
+                      //Text('0', style: TextStyle(color: Colors.grey[100]),), //change to icons
                       Spacer(),
                       Icon(Icons.thumb_up, size: 26, color: Colors.tealAccent),
                       SizedBox(width: 6,),Text(post['upvotes'].values.where((e)=> e as bool).length.toString(), style: TextStyle(color: Colors.grey[100]),),

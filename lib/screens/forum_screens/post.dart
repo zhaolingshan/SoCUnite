@@ -12,6 +12,7 @@ class Post { //for forums
   String ownerid;
   Map<String, dynamic> saved = {};
   Map<String, dynamic> upvotes = {};
+  Map<String, dynamic> reported = {};
   
 
 
@@ -25,7 +26,8 @@ class Post { //for forums
     this.documentid,
     this.ownerid,
     this.saved,
-    this.upvotes
+    this.upvotes,
+    this.reported,
     //this.image
   );
 

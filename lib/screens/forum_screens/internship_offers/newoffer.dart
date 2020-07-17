@@ -296,6 +296,7 @@ class _NewOfferState extends State<NewOffer> {
               widget.post.ownerid = uid;
               widget.post.saved = {uid: false};
               widget.post.upvotes =  {uid: false};
+              widget.post.reported = {uid: false};
               
               final DocumentReference documentReference = 
               await db.collection("public").document("internship_offers").
@@ -311,7 +312,8 @@ class _NewOfferState extends State<NewOffer> {
                 'contact': widget.post.contact,
                 'ownerid': widget.post.ownerid,
                 'saved': widget.post.saved,
-                'upvotes': widget.post.upvotes
+                'upvotes': widget.post.upvotes,
+                'reported': widget.post.reported,
               });
 
               final String documentid = documentReference.documentID;
@@ -335,7 +337,8 @@ class _NewOfferState extends State<NewOffer> {
                 'contact': widget.post.contact,
                 'ownerid': widget.post.ownerid,
                 'saved': widget.post.saved,
-                'upvotes': widget.post.upvotes
+                'upvotes': widget.post.upvotes,
+                'reported': widget.post.reported,
               });
               
               Navigator.pop(context);

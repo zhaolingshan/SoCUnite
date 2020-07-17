@@ -272,6 +272,7 @@ class _NewExperienceState extends State<NewExperience> {
               widget.post.ownerid = uid;
               widget.post.saved = {uid: false};
               widget.post.upvotes =  {uid: false};
+              widget.post.reported = {uid: false};
               
               final DocumentReference documentReference = 
               await db.collection("public").document("internship_experiences").
@@ -288,6 +289,7 @@ class _NewExperienceState extends State<NewExperience> {
                 'ownerid':  widget.post.ownerid,
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
+                'reported': widget.post.reported,
               });
 
               final String documentid = documentReference.documentID;
@@ -311,7 +313,8 @@ class _NewExperienceState extends State<NewExperience> {
                 'company': widget.post.company,
                 'ownerid':  widget.post.ownerid,
                 'saved': widget.post.saved,
-                'upvotes': widget.post.upvotes,         
+                'upvotes': widget.post.upvotes,    
+                'reported': widget.post.reported,     
               });
               
               Navigator.pop(context);

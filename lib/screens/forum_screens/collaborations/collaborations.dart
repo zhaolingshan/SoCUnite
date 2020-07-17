@@ -26,7 +26,7 @@ class _CollaborationsState extends State<Collaborations> {
         print(e);
     });
 
-    final post = new Collaboration(null,null,null,null,null,null,null,null,null,null,null,null,null);
+    final post = new Collaboration(null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],

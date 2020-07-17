@@ -1,5 +1,5 @@
 import 'package:SoCUniteTwo/providers/studyjio.dart';
-import 'package:SoCUniteTwo/screens/studyjio_screens/add_studyjio_screen.dart';
+//import 'package:SoCUniteTwo/screens/studyjio_screens/add_studyjio_screen.dart';
 import 'package:flutter/material.dart';
 
 class ChooseALocationScreen extends StatefulWidget {

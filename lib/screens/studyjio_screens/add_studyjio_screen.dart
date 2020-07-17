@@ -27,8 +27,6 @@ class AddStudyJioScreen extends StatefulWidget {
 
 class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
   Studyjio studyjio;
-  
-  //final database = Firestore.instance;
   String username;
   bool _didUserChooseOnline = false;
   final _descriptionFocusNode = FocusNode();
@@ -345,7 +343,10 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                     onPressed: () async {
                       studyjio = Studyjio(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
                       final uid = await Provider.of(context).auth.getCurrentUID(); 
-                      //if (validate()) {
+                      final DocumentSnapshot snapshot = await Firestore.instance.collection('users').document(uid).get();
+                      String getUsername = snapshot.data['username'];
+
+                      if (validate()) {
 
                         await Provider.of(context).auth.getCurrentUser().then((user) {
                           setState(() {
@@ -363,7 +364,7 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                         studyjio.modules = _modulesController.text;
                         studyjio.capacity = int.parse(_capacityController.text);
                         studyjio.ownerId = uid;
-                        studyjio.joinedUsers = {uid: true};
+                        studyjio.joinedUsers = {getUsername: true};
                         studyjio.currentCount = 1;
                         studyjio.location = getLocation;
                         studyjio.username = username;
@@ -411,9 +412,8 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                         });
                         print('done');
                         Navigator.pop(context);
-                        //}
-                        
-                      },
+                      }
+                    }
                 ), 
               ],
             ),

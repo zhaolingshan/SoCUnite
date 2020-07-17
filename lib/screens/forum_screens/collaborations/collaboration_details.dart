@@ -1,9 +1,9 @@
 import 'package:SoCUniteTwo/screens/forum_screens/collaborations/collaboration.dart';
+import 'package:SoCUniteTwo/screens/forum_screens/details/report_collaborations.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/upvote_collaborations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:SoCUniteTwo/screens/forum_screens/details/report.dart';
 import 'package:SoCUniteTwo/widgets/provider_widget.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/details/comments.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/collaborations/collaboration_comments.dart';
@@ -42,6 +42,7 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
        'contact': widget.collaboration.contact,
        'upvotes': widget.collaboration.upvotes,
         'saved': widget.collaboration.saved,
+        'reported': widget.collaboration.reported,
       });
       print('added to saved_collaborations collection');
     } else {
@@ -140,7 +141,7 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
                         icon: Icon(Icons.flag, color: Colors.red, size: 30,), 
                       onPressed: () { //report post
                         Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              MaterialPageRoute(builder: (context) => ReportCollaborations(post: widget.collaboration)));
                       },),
                       Column(children: <Widget>[
                         Text('Report', style: TextStyle(color: Colors.grey[100]),),
@@ -395,8 +396,8 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 25,), 
                       onPressed: () { //report post
-                        Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              //           Navigator.push(context, 
+              // MaterialPageRoute(builder: (context) => Report()));
                       },),
                       Text("report comment", style: TextStyle(fontSize: 14,
                       decoration: TextDecoration.underline, color: Colors.grey[100]),),

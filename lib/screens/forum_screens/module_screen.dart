@@ -9,44 +9,43 @@ import 'package:SoCUniteTwo/screens/forum_screens/CS2040S.dart';
 class ModuleScreen extends StatefulWidget { //list of modules
 
 
-
-
   @override
   _ModuleScreenState createState() => _ModuleScreenState();
 }
 
 class _ModuleScreenState extends State<ModuleScreen> {
-List<String> modules = ['CS2030', 'CS2040S', 'IS1103', 'MA1101R', 'GER1000']; //need to extract fields from document
-
-  List<String> mods = [];
-
   
+//List<String> modules = ['test', 'test', 'test', 'test', 'test']; //need to extract fields from document
 
-  void _loadData() async{
+  getModules() async {
     final uid = await Provider.of(context).auth.getCurrentUID();
-    await Firestore.instance.collection("users").document(uid).collection('settings')
-    .document('modules').get().then((value) async {
-      //for(int i = 0; i < value.data.length; i++) {
-        mods.add(value.data['module1']);
-        mods.add(value.data['module2']);
-        mods.add(value.data['module3']);
-        mods.add(value.data['module4']);
-        mods.add(value.data['module5']);
-        //print(value.data);
-        //make it such that CS2030 is always the first module 
-    //}
-      print(mods);
-      
-    });
+    DocumentSnapshot doc = await Firestore.instance.collection('users').document(uid).collection('settings')
+    .document('modules').get();
+    return doc;
   }
 
-  // void initState() {
-  //   super.initState();
-  //  WidgetsBinding.instance.addPostFrameCallback((_){
-  //   _loadData();
-  // });
+  Widget getmodule1(context, snapshot) {
+  return Text(snapshot.data['module1'], style: TextStyle(fontSize: 20, color: Colors.grey[100]));  
+  }
+
+  Widget getmodule2(context, snapshot) {
+  return Text(snapshot.data['module2'], style: TextStyle(fontSize: 20, color: Colors.grey[100]));      
+  }
+
+  Widget getmodule3(context, snapshot) {
+  return Text(snapshot.data['module3'], style: TextStyle(fontSize: 20, color: Colors.grey[100]));      
+  }
+
+  Widget getmodule4(context, snapshot) {
+  return Text(snapshot.data['module4'], style: TextStyle(fontSize: 20, color: Colors.grey[100]));      
+  }
+
+  Widget getmodule5(context, snapshot) {
+  return Text(snapshot.data['module5'], style: TextStyle(fontSize: 20, color: Colors.grey[100]));      
+  }
 
   
+
 
   @override
   Widget build(BuildContext context) {
@@ -78,16 +77,26 @@ List<String> modules = ['CS2030', 'CS2040S', 'IS1103', 'MA1101R', 'GER1000']; //
           )
         ],
       ),
-      body: ListView( //for loop the list???
+      body: ListView( 
         children: <Widget>[
           Card(
             color: Colors.grey[850],
-            child: ListTile(
+            child: ListTile( //must always display CS2030
               onTap: () {
                 Navigator.push(context, 
               MaterialPageRoute(builder: (context) => CS2030()));
               },
-              title: Text(modules[0], style: TextStyle(fontSize: 20, color: Colors.grey[100])),
+              title: //Text(modules[0], style: TextStyle(fontSize: 20, color: Colors.grey[100])),
+              FutureBuilder(
+              future: getModules(),
+             builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return getmodule1(context, snapshot);
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+              ),
               trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[100]),
             ),),
             Card(
@@ -97,28 +106,64 @@ List<String> modules = ['CS2030', 'CS2040S', 'IS1103', 'MA1101R', 'GER1000']; //
                 Navigator.push(context, 
               MaterialPageRoute(builder: (context) => CS2040S()));
               },
-              title: Text(modules[1], style: TextStyle(fontSize: 20, color: Colors.grey[100])),
+              title: FutureBuilder(
+              future: getModules(),
+             builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return getmodule2(context, snapshot);
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+              ),
               trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[100]),
             ),),
             Card(
               color: Colors.grey[850],
             child: ListTile(
               onTap: () {},
-              title: Text(modules[2], style: TextStyle(fontSize: 20, color: Colors.grey[100])),
+              title:  FutureBuilder(
+              future: getModules(),
+             builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return getmodule3(context, snapshot);
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+              ),
               trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[100]),
             ),),
             Card(
               color: Colors.grey[850],
             child: ListTile(
               onTap: () {},
-              title: Text(modules[3], style: TextStyle(fontSize: 20, color: Colors.grey[100])),
+              title:  FutureBuilder(
+              future: getModules(),
+             builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return getmodule4(context, snapshot);
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+              ),
               trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[100]),
             ),),
             Card(
               color: Colors.grey[850],
             child: ListTile(
               onTap: (){},
-              title: Text(modules[4], style: TextStyle(fontSize: 20, color: Colors.grey[100])),
+              title:  FutureBuilder(
+              future: getModules(),
+             builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return getmodule5(context, snapshot);
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+              ),
               trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[100]),
             ),),
         ],

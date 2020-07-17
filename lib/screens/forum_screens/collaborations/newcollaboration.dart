@@ -340,6 +340,7 @@ class _NewCollaborationState extends State<NewCollaboration> {
               widget.post.ownerid = uid;
               widget.post.saved = {uid: false};
               widget.post.upvotes =  {uid: false};
+              widget.post.reported = {uid: false};
               
               final DocumentReference documentReference = 
               await db.collection("public").document("collaborations").
@@ -357,6 +358,7 @@ class _NewCollaborationState extends State<NewCollaboration> {
                 'ownerid': widget.post.ownerid,
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
+                'reported': widget.post.reported,
               });
 
               final String documentid = documentReference.documentID;
@@ -382,6 +384,7 @@ class _NewCollaborationState extends State<NewCollaboration> {
                 'ownerid': widget.post.ownerid,
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
+                'reported': widget.post.reported,
               }); 
               Navigator.pop(context);
             },

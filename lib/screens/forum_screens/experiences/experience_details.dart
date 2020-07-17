@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/experiences/experience_comments.dart';
 import 'package:flutter/material.dart';
-import 'package:SoCUniteTwo/screens/forum_screens/details/report.dart';
+import 'package:SoCUniteTwo/screens/forum_screens/details/report_experiences.dart';
 import 'package:SoCUniteTwo/widgets/provider_widget.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/details/comments.dart';
 
@@ -44,7 +44,8 @@ class _ExperienceDetailsState extends State<ExperienceDetails> {
         'company': widget.experience.company,
         'ownerid': uid,
         'upvotes': widget.experience.upvotes,
-        'saved': widget.experience.saved,         
+        'saved': widget.experience.saved,    
+        'reported': widget.experience.reported,     
       });
       print('added to saved_experiences collection');
     } else {
@@ -141,7 +142,7 @@ class _ExperienceDetailsState extends State<ExperienceDetails> {
                         icon: Icon(Icons.flag, color: Colors.red, size: 30,), 
                       onPressed: () { //report post
                         Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              MaterialPageRoute(builder: (context) => ReportExperiences(post: widget.experience)));
                       },),
                       Column(children: <Widget>[
                         Text('Report', style: TextStyle(color: Colors.grey[100]),),
@@ -383,8 +384,8 @@ class _ExperienceDetailsState extends State<ExperienceDetails> {
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 25,), 
                       onPressed: () { //report post
-                        Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              //           Navigator.push(context, 
+              // MaterialPageRoute(builder: (context) => Report()));
                       },),
                       Text("report comment", style: TextStyle(fontSize: 14,
                       decoration: TextDecoration.underline, color: Colors.grey[100]),),

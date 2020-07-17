@@ -79,9 +79,17 @@ class _SignUpViewState extends State<SignUpView> {
           // 'modules': null,
           
           //'password': _password, profile picture is stored in firebase storage
-        }
-        );
+        });
         print("Signed up with new ID $uid");
+
+        await Firestore.instance.collection('users').document(uid).collection('settings')
+        .document('modules').setData({
+          'module1': 'No added module',
+          'module2': 'No added module',
+          'module3': 'No added module',
+          'module4': 'No added module',
+          'module5': 'No added module',
+        });
         Navigator.of(context).pushReplacementNamed('/home');
         }
     } catch (e) {

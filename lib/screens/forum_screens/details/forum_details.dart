@@ -45,6 +45,7 @@ class _ForumDetailsState extends State<ForumDetails> {
         'documentid': widget.forum.documentid,
         'upvotes': widget.forum.upvotes,
         'saved': widget.forum.saved,
+        'reported': widget.forum.reported,
       });
       print('added to saved_forums collection');
     } else {
@@ -177,7 +178,7 @@ class _ForumDetailsState extends State<ForumDetails> {
                         icon: Icon(Icons.flag, color: Colors.red, size: 30,), 
                       onPressed: () { 
                         Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              MaterialPageRoute(builder: (context) => Report(post: widget.forum,)));
                       },),
                       Column(children: <Widget>[
                         Text('Report', style: TextStyle(color: Colors.grey[100]),),
@@ -402,8 +403,8 @@ class _ForumDetailsState extends State<ForumDetails> {
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 25,), 
                       onPressed: () { //report post
-                        Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              //           Navigator.push(context, 
+              // MaterialPageRoute(builder: (context) => Report(post: ,)));
                       },),
                       Text("Report comment", style: TextStyle(fontSize: 14,
                       decoration: TextDecoration.underline, color: Colors.grey[100]),),

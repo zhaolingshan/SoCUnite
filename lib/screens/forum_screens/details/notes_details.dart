@@ -2,7 +2,7 @@ import 'package:SoCUniteTwo/screens/forum_screens/details/comments.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/post_notes.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:SoCUniteTwo/screens/forum_screens/details/report.dart';
+import 'package:SoCUniteTwo/screens/forum_screens/details/report_notes.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/details/note_comment.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/upvote_notes.dart';
 import 'package:SoCUniteTwo/widgets/provider_widget.dart';
@@ -48,6 +48,7 @@ class _NotesDetailsState extends State<NotesDetails> {
         'documentid': widget.note.documentid,
         'upvotes': widget.note.upvotes,
         'saved': widget.note.saved,
+        'reported': widget.note.reported,
       });
       print('added to saved_notes collection');
     } else {
@@ -155,7 +156,7 @@ class _NotesDetailsState extends State<NotesDetails> {
                         icon: Icon(Icons.flag, color: Colors.red, size: 30,), 
                       onPressed: () { //report post
                         Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              MaterialPageRoute(builder: (context) => ReportNotes(post: widget.note,)));
                       },),
                       Column(children: <Widget>[
                         Text('Report', style: TextStyle(color: Colors.grey[100]),),
@@ -385,8 +386,8 @@ class _NotesDetailsState extends State<NotesDetails> {
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 25,), 
                       onPressed: () { //report post
-                        Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Report()));
+              //           Navigator.push(context, 
+              // MaterialPageRoute(builder: (context) => Report(post: widget.note)));
                       },),
                       Text("Report comment", style: TextStyle(fontSize: 14,
                       decoration: TextDecoration.underline, color: Colors.grey[100]),),

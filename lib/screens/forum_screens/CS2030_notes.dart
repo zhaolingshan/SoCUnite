@@ -16,7 +16,7 @@ class _CS2030notesState extends State<CS2030notes> {
   final DateTime timeStamp = DateTime.now();
   @override
   Widget build(BuildContext context) {
-    final post = new PostNotes(null,null,null,null,null,null,null,null,null,null,null); 
+    final post = new PostNotes(null,null,null,null,null,null,null,null,null,null,null,null); 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],
@@ -161,9 +161,9 @@ class _CS2030notesState extends State<CS2030notes> {
                     ],),),
                     SizedBox(height: 20),
                     Row(children: <Widget>[
-                      SizedBox(width: 10,),
-                      Icon(Icons.comment, size: 26, color: Colors.tealAccent), 
-                      SizedBox(width: 6,),Text('0', style: TextStyle(color: Colors.grey[100]),), //change to icons
+                      // SizedBox(width: 10,),
+                      // Icon(Icons.comment, size: 26, color: Colors.tealAccent), 
+                      // SizedBox(width: 6,),Text('0', style: TextStyle(color: Colors.grey[100]),), //change to icons
                       Spacer(),
                       Icon(Icons.thumb_up, size: 26, color: Colors.tealAccent),
                       SizedBox(width: 6,),

@@ -27,7 +27,7 @@ class _ExperiencesState extends State<Experiences> {
         print(e);
     });
 
-    final post = new Experience(null,null,null,null,null,null,null,null,null,null,null,null);
+    final post = new Experience(null,null,null,null,null,null,null,null,null,null,null,null,null);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[850],

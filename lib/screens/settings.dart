@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class Settings extends StatefulWidget {
+  
   @override
   _SettingsState createState() => _SettingsState();
 }
@@ -14,18 +15,84 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   int karmaPts = 0;
 
-  getKarmaPointsfromPosts() async {
+
+  Future<int> getKarmaPointsfromPosts() async {
+    //int karmaPts = 0;
     final uid = await Provider.of(context).auth.getCurrentUID();
     await Firestore.instance.collection('users').document(uid).collection('private_forums')
     .getDocuments().then((querySnapshot) { //list of documents 
        querySnapshot.documents.forEach((result) async { //each documentid is result 
-       DocumentSnapshot ss = await Firestore.instance.collection('users').document(uid)
-       .collection('private_forums').document(result.documentID).get();
-       int i = ss.data['upvotes'].values.where((e)=> e as bool).size;
-       karmaPts = karmaPts + i;
+       int i = result.data['upvotes'].values.where((e)=> e as bool).length;     
+       print('i:'+i.toString());
+         karmaPts = karmaPts + i;    
+
     });
     });
-    print(karmaPts);
+    await Firestore.instance.collection('users').document(uid).collection('private_feedbacks')
+    .getDocuments().then((querySnapshot) { //list of documents 
+       querySnapshot.documents.forEach((result) async { //each documentid is result 
+       int j = result.data['upvotes'].values.where((e)=> e as bool).length;
+       karmaPts = karmaPts + j;
+       print('j:'+j.toString());
+      
+    });
+    });
+
+    await Firestore.instance.collection('users').document(uid).collection('private_notes')
+    .getDocuments().then((querySnapshot) { //list of documents 
+       querySnapshot.documents.forEach((result) async { //each documentid is result 
+       int k = result.data['upvotes'].values.where((e)=> e as bool).length;
+       karmaPts = karmaPts + k;
+       print('k:'+k.toString());
+       
+    });
+    });
+
+    await Firestore.instance.collection('users').document(uid).collection('private_experiences')
+    .getDocuments().then((querySnapshot) { //list of documents 
+       querySnapshot.documents.forEach((result) async { //each documentid is result 
+       int l = result.data['upvotes'].values.where((e)=> e as bool).length;
+       karmaPts = karmaPts + l;
+       print('l:'+l.toString());
+       
+    });
+    });
+
+    await Firestore.instance.collection('users').document(uid).collection('private_offers')
+    .getDocuments().then((querySnapshot) { //list of documents 
+       querySnapshot.documents.forEach((result) async { //each documentid is result 
+       int m = result.data['upvotes'].values.where((e)=> e as bool).length;
+       karmaPts = karmaPts + m;
+       print('m:'+m.toString());
+    });
+    });
+
+    await Firestore.instance.collection('users').document(uid).collection('private_collaborations')
+    .getDocuments().then((querySnapshot) { //list of documents 
+       querySnapshot.documents.forEach((result) async { //each documentid is result 
+       int n = result.data['upvotes'].values.where((e)=> e as bool).length;
+       karmaPts = karmaPts + n;
+       print('n:'+n.toString());
+    });
+    });
+
+
+    // await Firestore.instance.collection('public').document('CS2030').collection('Forums')
+    // .getDocuments().then((querySnapshot) { //list of documents 
+    //    querySnapshot.documents.forEach((result) async { //each post is result 
+    //    Firestore.instance.collection('public').document('CS2030').collection('Forums')
+    //    .document(result.documentID).collection('comments').where('ownerid', isEqualTo: uid).getDocuments()
+    //    .then((value) async {
+    //      value.documents.forEach((result) async { 
+    //      int a = result.data['upvotes'].values.where((e)=> e as bool).length;
+    //      print('a: ' + a.toString());
+    //      karmaPts = karmaPts + a;
+    //    }); 
+    // });
+    // });
+    // });
+
+   print('karmaPts:' + karmaPts.toString());
     return karmaPts;
   }
 
@@ -66,13 +133,21 @@ class _SettingsState extends State<Settings> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             margin: EdgeInsets.all(32),
             color: Colors.grey[850],
-            child:          
-            ListTile(
-              title: Text("24 karma points",
+            child:        
+            FutureBuilder<int>(
+              future: getKarmaPointsfromPosts(),
+              builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+              if(snapshot.hasData){
+                return Text('Your karma points : ${snapshot.data}',
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[100], 
               fontSize: 18),
-              textAlign: TextAlign.center), //edit to update realtime karmapts
-            ),
+              textAlign: TextAlign.center);
+              }
+              return Text('Your karma points : calculating...', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[100], 
+              fontSize: 18),
+              textAlign: TextAlign.center);
+            },
+              )
           ),
           Card(
             color: Colors.grey[850],
@@ -81,7 +156,6 @@ class _SettingsState extends State<Settings> {
               children: <Widget>[
                 ListTile(
               onTap: () { //open to change password
-              getKarmaPointsfromPosts();
                 Navigator.of(context).pushNamed('/passwordchange');
               },
               leading: Icon(Icons.lock, color: Colors.lightBlueAccent[100],),

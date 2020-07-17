@@ -13,6 +13,7 @@ class Offer { //for forums
   String ownerid;
   Map<String, dynamic> saved = {};
   Map<String, dynamic> upvotes = {};
+  Map<String, dynamic> reported = {};
   
 
   Offer(
@@ -27,7 +28,8 @@ class Offer { //for forums
     this.documentid,
     this.ownerid,
     this.saved,
-    this.upvotes
+    this.upvotes,
+    this.reported,
   );
 
   Offer.fromSnapshot(DocumentSnapshot snapshot) : 

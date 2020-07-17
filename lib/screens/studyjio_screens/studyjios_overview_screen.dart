@@ -1,7 +1,7 @@
 import 'package:SoCUniteTwo/screens/studyjio_screens/joinedjios_listview_screen.dart';
 import 'package:SoCUniteTwo/screens/studyjio_screens/myjios_listview_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 
 import 'package:SoCUniteTwo/screens/studyjio_screens/add_studyjio_screen.dart';
 import 'package:SoCUniteTwo/screens/studyjio_screens/studyjios_listview_screen.dart';
