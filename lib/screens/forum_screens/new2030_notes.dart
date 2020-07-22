@@ -269,6 +269,7 @@ class _New2030notesState extends State<New2030notes> {
               widget.post.saved = {uid: false};
               widget.post.upvotes =  {uid: false};
               widget.post.reported = {uid: false};
+              
 
               final DocumentReference documentReference = 
               await db.collection("public").document('CS2030').

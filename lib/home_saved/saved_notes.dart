@@ -15,6 +15,10 @@ class _SavedNotesState extends State<SavedNotes> {
   String username;
   var timeStamp = new DateTime.now();
 
+  getUID() async {
+    return await Provider.of(context).auth.getCurrentUID();
+  }
+
   @override
   Widget build(BuildContext context) {
     
@@ -90,32 +94,94 @@ class _SavedNotesState extends State<SavedNotes> {
                       Text(note['timestamp'], style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: Colors.grey[400]),),
                       Spacer(),
+                      FutureBuilder(
+                        future: getUID(), //returns uid
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.data == note['ownerid']) {
+                            return  IconButton(
+                              iconSize: 30,
+                              color: Colors.purpleAccent,
+                              icon: Icon(Icons.delete_forever),
+                              onPressed: () async {
+                                final uid = await Provider.of(context).auth.getCurrentUID();
+
+                                await Firestore.instance.collection('users').document(uid)
+                                .collection('private_notes').document(note.documentID).delete();
+
+                                await Firestore.instance.collection('public').document('CS2030')
+                                .collection('Notes').document(note.documentID).delete();
+
+                                await Firestore.instance.collection('users').getDocuments().then((querySnapshot){
+                                querySnapshot.documents.forEach((result) { //result is each uid 
+                                Firestore.instance.collection('users').document(result.documentID)
+                                .collection('saved_notes').getDocuments().then((querySnapshot) {
+                                querySnapshot.documents.forEach((element) { //each element is each saved forum
+                                  if(element.documentID == note.documentID) {
+                                    Firestore.instance.collection('users').document(result.documentID)
+                                    .collection('saved_notes').document(element.documentID).delete();
+                                  }
+                                });
+                                });
+                                });
+                                });
+                              }
+                            );
+                          }
+                          else {
+                          return Container();
+                         }
+                        },
+                      )
                     ]),),
                     SizedBox(height: 10),
                     Row(children: <Widget>[
                       SizedBox(width: 10,),
-                      CircleAvatar(
-                      backgroundImage: note['profilePicture'] != null ?
-                      NetworkImage(note['profilePicture']) : 
-                      NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
-                      backgroundColor: Colors.grey,
-                      radius: 20,),
+                       FutureBuilder( 
+                future: Firestore.instance.collection('users').document(note['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if(snapshot.data != null) {
+                    if (snapshot.data['profilepicURL'] != null) {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(snapshot.data['profilepicURL'])
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      );
+                    }           
+                  } else {
+                    return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                      );
+                  } 
+                }),    
+                      // CircleAvatar(
+                      // backgroundImage: note['profilePicture'] != null ?
+                      // NetworkImage(note['profilePicture']) : 
+                      // NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      // backgroundColor: Colors.grey,
+                      // radius: 20,),
                       SizedBox(width: 10,),
-                      Text(note['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                      FutureBuilder( 
+                future: Firestore.instance.collection('users').document(note['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(snapshot.data['username'], style: TextStyle(fontWeight: FontWeight.bold,
                       fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
-          //             FutureBuilder( 
-          //     future: Provider.of(context).auth.getCurrentUser(),
-          //     builder: (context, snapshot) {
-          //       if (snapshot.connectionState == ConnectionState.done) {
-          //         return Text("${snapshot.data.displayName}", style: TextStyle(fontWeight: FontWeight.bold,
-          //          fontSize: 16, decoration: TextDecoration.underline,),
-          //          );
-          //       } else {
-          //         return CircularProgressIndicator();
-          //       }
-          //     }, 
-          // ),
-                    )],),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }           
+                }, 
+              ),              
+                    //   Text(note['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                    //   fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
+                    // )
+                    ],),
                     SizedBox(height: 10),
                     Padding( 
                     padding: EdgeInsets.only(top: 4, bottom: 8),

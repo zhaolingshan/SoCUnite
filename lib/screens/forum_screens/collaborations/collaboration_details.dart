@@ -1,3 +1,4 @@
+import 'package:SoCUniteTwo/screens/comments_report/report_collabcomment.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/collaborations/collaboration.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/details/report_collaborations.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/upvote_collaborations.dart';
@@ -21,6 +22,11 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
   
   bool isSaved = false;
   bool isUpvoted = false;
+  bool isResolved = false;
+
+  getUID() async { 
+    return await Provider.of(context).auth.getCurrentUID();
+  }
 
   _saved() async {
     final uid = await Provider.of(context).auth.getCurrentUID();
@@ -38,11 +44,13 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
        'documentid': widget.collaboration.documentid,
        'link': widget.collaboration.link,
        'name': widget.collaboration.name,
+       'ownerid': widget.collaboration.ownerid,
        'experience': widget.collaboration.experience,
        'contact': widget.collaboration.contact,
        'upvotes': widget.collaboration.upvotes,
         'saved': widget.collaboration.saved,
         'reported': widget.collaboration.reported,
+        'isResolved': isResolved,
       });
       print('added to saved_collaborations collection');
     } else {
@@ -83,19 +91,191 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
         setState(() {
            isSaved = value.data['saved'][uid]; //accessing value 
            isUpvoted = value.data['upvotes'][uid];
-
+           isResolved = value.data['isResolved'];
         });
        print('set state upon opening page');
       }
     });
   }
 
+  void _markAsResolved() { 
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+   padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 20, bottom: 10),
+   child:
+        AlertDialog(
+          backgroundColor: Colors.grey[850],
+          title: new Text(
+            "Confirmation",
+            style: TextStyle(color: Colors.tealAccent),
+            ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget> [
+              Text(
+                "Do you want to mark your collaboration as closed?",
+                style: TextStyle(color: Colors.grey[100]),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            FlatButton(
+              color: Colors.tealAccent,
+              child: new Text(
+                "Confirm",
+                style: TextStyle(color: Colors.black),
+              ),
+              onPressed: () async { //change data 
+                setState(() {
+                  isResolved = true;
+                });
+                widget.collaboration.isResolved = true; //set isResolved for this post
+                await Firestore.instance.collection('public').document('collaborations')
+                .collection('Collaborations').document(widget.collaboration.documentid).setData({
+                  'isResolved': isResolved,
+                  },merge : true).then((_){
+                    print("marked public post as resolved!"); //for public
+                });
+
+                await Firestore.instance.collection('users').document(widget.collaboration.ownerid)
+                .collection('private_collaborations').document(widget.collaboration.documentid).setData({
+                  'isResolved': widget.collaboration.isResolved,
+                  },merge : true).then((_){
+                    print("marked private post as resolved!");
+                });
+
+                await Firestore.instance.collection('users').getDocuments().then((querySnapshot){
+              querySnapshot.documents.forEach((result) { //result is each uid 
+                Firestore.instance.collection('users').document(result.documentID)
+                .collection('saved_collaborations').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //each element is each saved forum
+                    if(element.documentID == widget.collaboration.documentid) {
+                      Firestore.instance.collection('users').document(result.documentID)
+                      .collection('saved_collaborations').document(element.documentID).setData({
+                        'isResolved': isResolved,
+                 }, merge: true).then((_){
+                  print("marked saved forums as resolved!");
+                });  
+                    }
+                  });
+                });
+               });
+            });      
+                Navigator.of(context).pop();
+              },
+            ),
+            SizedBox(width: 40,),
+            FlatButton(
+              color: Colors.tealAccent,
+              child: new Text(
+                "Back",
+                style: TextStyle(color: Colors.black),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+        );
+      },
+    );
+  }
+
+  void _markAsUnresolved() { 
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+   padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 20, bottom: 10),
+   child:
+        AlertDialog(
+          backgroundColor: Colors.grey[850],
+          title: new Text(
+            "Confirmation",
+            style: TextStyle(color: Colors.tealAccent),
+            ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget> [
+              Text(
+                "Do you want to mark your collaboration as available?",
+                style: TextStyle(color: Colors.grey[100]),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            FlatButton(
+              color: Colors.tealAccent,
+              child: new Text(
+                "Confirm",
+                style: TextStyle(color: Colors.black),
+              ),
+              onPressed: () async { //change data 
+                setState(() {
+                  isResolved = false;
+                });
+                widget.collaboration.isResolved = false;
+                await Firestore.instance.collection('public').document('collaborations')
+                .collection('Collaborations').document(widget.collaboration.documentid).setData({
+                  'isResolved': widget.collaboration.isResolved,
+                  },merge : true).then((_){
+                    print("marked public post as resolved!"); //for public
+                });
+
+                await Firestore.instance.collection('users').document(widget.collaboration.ownerid)
+                .collection('private_collaborations').document(widget.collaboration.documentid).setData({
+                  'isResolved': widget.collaboration.isResolved,
+                  },merge : true).then((_){
+                    print("marked private post as resolved!");
+                });
+
+                await Firestore.instance.collection('users').getDocuments().then((querySnapshot){
+              querySnapshot.documents.forEach((result) { //result is each uid 
+                Firestore.instance.collection('users').document(result.documentID)
+                .collection('saved_collaborations').getDocuments().then((querySnapshot) {
+                  querySnapshot.documents.forEach((element) { //each element is each saved forum
+                    if(element.documentID == widget.collaboration.documentid) {
+                      Firestore.instance.collection('users').document(result.documentID)
+                      .collection('saved_collaborations').document(element.documentID).setData({
+                        'isResolved': widget.collaboration.isResolved,
+                 }, merge: true).then((_){
+                  print("marked saved forums as resolved!");
+                });  
+                    }
+                  });
+                });
+               });
+            });      
+                Navigator.of(context).pop();
+              },
+            ),
+            SizedBox(width: 40,),
+            FlatButton(
+              color: Colors.tealAccent,
+              child: new Text(
+                "Back",
+                style: TextStyle(color: Colors.black),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+        );
+      },
+    );
+  }
   
 
   @override
   Widget build(BuildContext context) {
-    final comment = new Comments(null,null,null,null,null,null,null);
-    
+    final comment = new Comments(null,null,null,null,null,null,null,null);
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -109,7 +289,41 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
               },
             );
           },
-        ) ,
+        ),
+        actions: <Widget>[
+           FutureBuilder(
+            future: getUID(), //returns uid
+            builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.data == widget.collaboration.ownerid) { //if is mine
+            print(isResolved);
+              if(isResolved == false) {
+                return RaisedButton(
+                  color: Colors.grey[850],
+                child: Text('Mark as closed?', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[100],
+                      fontSize: 15, decoration: TextDecoration.underline,),),
+                splashColor: Colors.tealAccent,
+                onPressed: () {
+                  _markAsResolved();
+                }
+              );
+              } else { //if resolved is true
+                return RaisedButton(
+                  color: Colors.grey[850],
+                child: Text('Mark as available?', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[100],
+                      fontSize: 15, decoration: TextDecoration.underline,),),
+                splashColor: Colors.tealAccent,
+                onPressed: () {
+                  _markAsUnresolved();
+                }
+              );
+              }
+            }
+
+            else { //if not owner
+            return Container();
+            }
+           },
+          ) ]
       ),
       body:  SingleChildScrollView(
         child: Container(
@@ -126,16 +340,42 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
                     Row(children: <Widget>[
                       //profile pic username
                       SizedBox(width: 10,),
-                      CircleAvatar(
-                      backgroundImage: 
-                      widget.collaboration.profilePicture == null ?
-                      NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png')
-                      : NetworkImage(widget.collaboration.profilePicture),
-                      backgroundColor: Colors.grey,
-                      radius: 30,),
+                      FutureBuilder( 
+                future: Firestore.instance.collection('users').document(widget.collaboration.ownerid).get(),
+                builder: (context, snapshot) {
+                  if(snapshot.data != null) {
+                    if (snapshot.data['profilepicURL'] != null) {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(snapshot.data['profilepicURL'])
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      );
+                    }           
+                  } else {
+                    return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                      );
+                  } 
+                }),
                       SizedBox(width: 10,),
-                      Text(widget.collaboration.username, style: TextStyle(fontWeight: FontWeight.bold,
-                      fontSize: 18, decoration: TextDecoration.underline, color: Colors.grey[100])),
+                       FutureBuilder( 
+                future: Firestore.instance.collection('users').document(widget.collaboration.ownerid).get(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(snapshot.data['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                      fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }           
+                }, 
+              ),        
                       Spacer(),
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 30,), 
@@ -363,22 +603,70 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
                       Text(comment['timestamp'], 
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,
                       color: Colors.grey[400]),),
-                      Spacer(),   
+                      Spacer(),
+                      FutureBuilder(
+                        future: getUID(), //returns uid
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.data == comment['ownerid']) {
+                            return  IconButton(
+                              iconSize: 30,
+                              color: Colors.red,
+                              icon: Icon(Icons.delete_forever),
+                              onPressed: () async {
+                                //final uid = await Provider.of(context).auth.getCurrentUID();
+                                await Firestore.instance.collection('public').document('collaborations')
+                                .collection('Collaborations').document(widget.collaboration.documentid).
+                                collection('comments').document(comment.documentID).delete();
+                              }
+                            );
+                          }
+                          else {
+                          return Container();
+                         }
+                        },
+                      )   
                     ],),
                     ),
                     SizedBox(height: 10),
                     Row(children: <Widget>[
                       SizedBox(width: 10,),
-                      CircleAvatar(
-                      backgroundImage: comment['profilePicture'] != null ?
-                      NetworkImage(comment['profilePicture']) : 
-                      NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
-                      backgroundColor: Colors.grey,
-                      radius: 20,),
+                      FutureBuilder( 
+                future: Firestore.instance.collection('users').document(comment['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if(snapshot.data != null) {
+                    if (snapshot.data['profilepicURL'] != null) {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(snapshot.data['profilepicURL'])
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      );
+                    }           
+                  } else {
+                    return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                      );
+                  } 
+                }), 
                       SizedBox(width: 10,),
-                      Text(comment['username'], style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[100],
-                      fontSize: 16, decoration: TextDecoration.underline,),
-                    )],),
+                     FutureBuilder( 
+                future: Firestore.instance.collection('users').document(comment['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(snapshot.data['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                      fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }           
+                }, 
+              ),        
+                    ],),
                     SizedBox(height: 10),
                     Padding( 
                     padding: EdgeInsets.only(top: 4, bottom: 8),
@@ -396,8 +684,8 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 25,), 
                       onPressed: () { //report post
-              //           Navigator.push(context, 
-              // MaterialPageRoute(builder: (context) => Report()));
+                        Navigator.push(context, 
+              MaterialPageRoute(builder: (context) => ReportCollaborationComment(post: widget.collaboration, comment: commentPosted,)));
                       },),
                       Text("report comment", style: TextStyle(fontSize: 14,
                       decoration: TextDecoration.underline, color: Colors.grey[100]),),

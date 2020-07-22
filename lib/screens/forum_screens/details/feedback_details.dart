@@ -19,6 +19,10 @@ class _FeedbackDetailsState extends State<FeedbackDetails> {
 
   bool isSaved = false;
   bool isUpvoted = false;
+
+  getUID() async { 
+    return await Provider.of(context).auth.getCurrentUID();
+  }
  
 
   _saved() async {
@@ -97,7 +101,7 @@ class _FeedbackDetailsState extends State<FeedbackDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final comment = new Comments(null,null,null,null,null,null,null);
+    final comment = new Comments(null,null,null,null,null,null,null,null);
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -125,16 +129,42 @@ class _FeedbackDetailsState extends State<FeedbackDetails> {
                     Row(children: <Widget>[
                       //profile pic username
                       SizedBox(width: 10,),
-                      CircleAvatar(
-                      backgroundImage: 
-                      widget.feedback.profilePicture == null ?
-                      NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png')
-                      : NetworkImage(widget.feedback.profilePicture),
-                      backgroundColor: Colors.grey,
-                      radius: 30,),
+                     FutureBuilder( 
+                future: Firestore.instance.collection('users').document(widget.feedback.ownerid).get(),
+                builder: (context, snapshot) {
+                  if(snapshot.data != null) {
+                    if (snapshot.data['profilepicURL'] != null) {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(snapshot.data['profilepicURL'])
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      );
+                    }           
+                  } else {
+                    return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                      );
+                  } 
+                }),
                       SizedBox(width: 10,),
-                      Text(widget.feedback.username, style: TextStyle(fontWeight: FontWeight.bold,
-                      fontSize: 18, decoration: TextDecoration.underline, color: Colors.grey[100])),
+                     FutureBuilder( 
+                future: Firestore.instance.collection('users').document(widget.feedback.ownerid).get(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(snapshot.data['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                      fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }           
+                }, 
+              ),        
                       Spacer(),
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 30,), 
@@ -350,22 +380,70 @@ class _FeedbackDetailsState extends State<FeedbackDetails> {
                       Text(comment['timestamp'], 
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,
                       color: Colors.grey[400]),),
-                      Spacer(),   
+                      Spacer(),
+                      FutureBuilder(
+                        future: getUID(), //returns uid
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.data == comment['ownerid']) {
+                            return  IconButton(
+                              iconSize: 30,
+                              color: Colors.red,
+                              icon: Icon(Icons.delete_forever),
+                              onPressed: () async {
+                                //final uid = await Provider.of(context).auth.getCurrentUID();
+                                await Firestore.instance.collection('public').document('CS2030')
+                                .collection('Feedbacks').document(widget.feedback.documentid).
+                                collection('comments').document(comment.documentID).delete();
+                              }
+                            );
+                          }
+                          else {
+                          return Container();
+                         }
+                        },
+                      )   
                     ],),
                     ),
                     SizedBox(height: 10),
                     Row(children: <Widget>[
                       SizedBox(width: 10,),
-                      CircleAvatar(
-                      backgroundImage: comment['profilePicture'] != null ?
-                      NetworkImage(comment['profilePicture']) : 
-                      NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
-                      backgroundColor: Colors.grey,
-                      radius: 20,),
+                     FutureBuilder( 
+                future: Firestore.instance.collection('users').document(comment['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if(snapshot.data != null) {
+                    if (snapshot.data['profilepicURL'] != null) {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(snapshot.data['profilepicURL'])
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      );
+                    }           
+                  } else {
+                    return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                      );
+                  } 
+                }), 
                       SizedBox(width: 10,),
-                      Text(comment['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                      FutureBuilder( 
+                future: Firestore.instance.collection('users').document(comment['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(snapshot.data['username'], style: TextStyle(fontWeight: FontWeight.bold,
                       fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
-                    )],),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }           
+                }, 
+              ),        
+                    ],),
                     SizedBox(height: 10),
                     Padding( 
                     padding: EdgeInsets.only(top: 4, bottom: 8),

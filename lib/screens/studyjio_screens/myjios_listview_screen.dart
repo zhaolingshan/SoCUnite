@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:SoCUniteTwo/screens/studyjio_screens/studyjio_detail_screen.dart';
 import 'package:SoCUniteTwo/providers/studyjio.dart';
 import 'package:SoCUniteTwo/widgets/studyjios/joinstudyjio.dart';
 import 'package:SoCUniteTwo/widgets/provider_widget.dart';
@@ -55,9 +55,12 @@ class _MyjiosListviewScreenState extends State<MyjiosListviewScreen> {
             color: Colors.grey[850],
             child: InkWell(
               onTap: () {
-                /*Navigator.push(context, MaterialPageRoute(
-        builder: (context) => ForumDetails(forum: forum) //with this particular forum 
-                )); */
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(
+                    builder: (context) => StudyjioDetailScreen(studyjio: myJio,) 
+                  )
+                ); 
               },
               child: Row(
                 children: <Widget>[

@@ -8,7 +8,7 @@ import 'package:SoCUniteTwo/widgets/studyjios/joinstudyjio.dart';
 import 'package:SoCUniteTwo/screens/studyjio_screens/studyjio_detail_screen.dart';
 
 class StudyjiosListviewScreen extends StatefulWidget {
-  //static bool isFull = false;
+  static bool isFull = false;
 
   @override
   _StudyjiosListviewScreenState createState() => _StudyjiosListviewScreenState();
@@ -69,8 +69,8 @@ class _StudyjiosListviewScreenState extends State<StudyjiosListviewScreen> {
   }
 
   Widget buildBrowseJios(BuildContext context, DocumentSnapshot studyjio) {
-    // StudyjiosListviewScreen.isFull = 
-    // studyjio['capacity'] == studyjio['joinedUsers'].values.where((e)=> e as bool).length;
+    StudyjiosListviewScreen.isFull = 
+    studyjio['capacity'] == studyjio['joinedUsers'].values.where((e)=> e as bool).length;
 
     final browseJio = Studyjio.fromSnapshot(studyjio);
     return Container(

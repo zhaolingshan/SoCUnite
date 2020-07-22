@@ -341,6 +341,7 @@ class _NewCollaborationState extends State<NewCollaboration> {
               widget.post.saved = {uid: false};
               widget.post.upvotes =  {uid: false};
               widget.post.reported = {uid: false};
+              widget.post.isResolved = false;
               
               final DocumentReference documentReference = 
               await db.collection("public").document("collaborations").
@@ -355,10 +356,11 @@ class _NewCollaborationState extends State<NewCollaboration> {
                 'name': widget.post.name,
                 'experience': widget.post.experience,
                 'contact': widget.post.contact,
-                'ownerid': widget.post.ownerid,
+                'ownerid': uid,
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
                 'reported': widget.post.reported,
+                'isResolved': widget.post.isResolved,
               });
 
               final String documentid = documentReference.documentID;
@@ -381,10 +383,11 @@ class _NewCollaborationState extends State<NewCollaboration> {
                 'name': widget.post.name,
                 'experience': widget.post.experience,
                 'contact': widget.post.contact,
-                'ownerid': widget.post.ownerid,
+                'ownerid': uid,
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
                 'reported': widget.post.reported,
+                'isResolved': widget.post.isResolved,
               }); 
               Navigator.pop(context);
             },

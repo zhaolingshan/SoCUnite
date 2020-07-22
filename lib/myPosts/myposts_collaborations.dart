@@ -135,6 +135,23 @@ class _MyPostsCollaborationsState extends State<MyPostsCollaborations> {
                       Text(collaboration['timestamp'], 
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: Colors.grey[400]),),
+                      SizedBox(width: 10,),
+                      (collaboration['isResolved'] ? Card(
+                       color: Colors.redAccent[400],
+                       elevation: 10,
+                        margin: EdgeInsets.all(6.0),
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 2, bottom: 2, left: 3, right: 3),
+                          child: Text('CLOSED',
+                           style: TextStyle(fontWeight: FontWeight.bold),))) : 
+                     Card(
+                       color: Colors.lightGreenAccent[400],
+                       elevation: 10,
+                        margin: EdgeInsets.all(6.0),
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 2, bottom: 2, left: 3, right: 3),
+                          child: Text('AVAILABLE',
+                           style: TextStyle(fontWeight: FontWeight.bold),)))),
                       Spacer(), 
                       IconButton(
                       iconSize: 30,
@@ -148,22 +165,72 @@ class _MyPostsCollaborationsState extends State<MyPostsCollaborations> {
 
                         await Firestore.instance.collection('public').document('collaborations')
                         .collection('Collaborations').document(collaboration.documentID).delete();
+
+                        await Firestore.instance.collection('users').getDocuments().then((querySnapshot){
+                        querySnapshot.documents.forEach((result) { //result is each uid 
+                        Firestore.instance.collection('users').document(result.documentID)
+                        .collection('saved_collaborations').getDocuments().then((querySnapshot) {
+                        querySnapshot.documents.forEach((element) { //each element is each saved forum
+                        if(element.documentID == collaboration.documentID) {
+                        Firestore.instance.collection('users').document(result.documentID)
+                        .collection('saved_collaborations').document(element.documentID).delete();
+                        }
+                        });
+                        });
+                        });
+                        });
                       },)   
                     ],),
                     ),
                     SizedBox(height: 10),
                     Row(children: <Widget>[
                       SizedBox(width: 10,),
-                      CircleAvatar(
-                      backgroundImage: collaboration['profilePicture'] != null ?
-                      NetworkImage(collaboration['profilePicture']) : 
-                      NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
-                      backgroundColor: Colors.grey,
-                      radius: 20,),
+                       FutureBuilder( 
+                future: Firestore.instance.collection('users').document(collaboration['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if(snapshot.data != null) {
+                    if (snapshot.data['profilepicURL'] != null) {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(snapshot.data['profilepicURL'])
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      );
+                    }           
+                  } else {
+                    return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                      );
+                  } 
+                }),    
+                      // CircleAvatar(
+                      // backgroundImage: collaboration['profilePicture'] != null ?
+                      // NetworkImage(collaboration['profilePicture']) : 
+                      // NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      // backgroundColor: Colors.grey,
+                      // radius: 20,),
                       SizedBox(width: 10,),
-                      Text(collaboration['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                    //   Text(collaboration['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                    //   fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
+                    // )
+                    FutureBuilder( 
+                future: Firestore.instance.collection('users').document(collaboration['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(snapshot.data['username'], style: TextStyle(fontWeight: FontWeight.bold,
                       fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
-                    )],),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }           
+                }, 
+              ),             
+                    ],),
                     SizedBox(height: 10),
                     Padding( 
                     padding: EdgeInsets.only(top: 4, bottom: 8),

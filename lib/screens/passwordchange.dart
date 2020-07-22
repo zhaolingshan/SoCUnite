@@ -83,9 +83,9 @@ class _PasswordChangeState extends State<PasswordChange> {
                             enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[800])),
              labelStyle: TextStyle(color: Colors.grey[100]),
              labelText: "   Current password",
-             errorText: checkCurrentPasswordValid 
-             ? null 
-             : "Please re-enter your current password"
+            //  errorText: checkCurrentPasswordValid 
+            //  ? null 
+            //  : "Please re-enter your current password"
            ),
         validator: (value) {
           if (value.isEmpty) {
@@ -131,18 +131,12 @@ class _PasswordChangeState extends State<PasswordChange> {
                   _changePassword(_newPassword);
                   //Navigator.of(context).pop(); //change password 
                   //print(_newPassword);
-                }
-                final snackBar = SnackBar(
+                  final snackBar = SnackBar(
             content: Text('Your password change is successful!'),
             duration: Duration(seconds: 3),
-            // action: SnackBarAction(
-              // label: 'Undo',
-              // onPressed: () {
-              //   // Some code to undo the change.
-              // },
-            // ),
           );
                 Scaffold.of(context).showSnackBar(snackBar);
+                }          
               },
               color: Colors.blue[300],
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),

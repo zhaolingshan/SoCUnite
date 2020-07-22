@@ -89,6 +89,7 @@ class _FeedbackCommentState extends State<FeedbackComment> {
                       widget.comment.profilePicture = profilePicture;
                        widget.comment.ownerid = uid;
                       widget.comment.upvotes = {uid: false};
+                       widget.comment.reported = {uid: false};
                     
                     final DocumentReference documentReference =
                       await Firestore.instance.collection("public").document('CS2030')
@@ -99,8 +100,9 @@ class _FeedbackCommentState extends State<FeedbackComment> {
                         'username': widget.comment.username,
                         'profilePicture': widget.comment.profilePicture,
                         'upvotes': widget.comment.upvotes,
-                        'ownerid': widget.post.ownerid,
+                        'ownerid': uid,
                         'documentid': '',
+                        'reported': widget.comment.reported,
                       }
                       );
 

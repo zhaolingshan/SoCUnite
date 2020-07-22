@@ -8,6 +8,7 @@ class Comments {
   String documentid;
   String ownerid;
   Map<String, dynamic> upvotes = {};
+  Map<String, dynamic> reported = {};
 
 
   Comments(
@@ -18,6 +19,7 @@ class Comments {
     this.documentid,
     this.ownerid,
     this.upvotes,
+    this.reported,
   );
 
   Comments.fromSnapshot(DocumentSnapshot snapshot) :

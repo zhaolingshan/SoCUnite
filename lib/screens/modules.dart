@@ -10,14 +10,14 @@ class Modules extends StatefulWidget {
 }
 
 class _ModulesState extends State<Modules> {
-    String module1 = '';
-    String module2 = '';
-    String module3 = '';
-    String module4 = '';
-    String module5 = '';
-    String module6 = '';
-    String module7 = '';
-    String module8 = '';
+
+  getModules() async {
+    final uid = await Provider.of(context).auth.getCurrentUID();
+    DocumentSnapshot doc = await Firestore.instance.collection('users').document(uid).collection('settings')
+    .document('modules').get();
+    return doc;
+  }
+
   TextEditingController _module1Controller = new TextEditingController();
     TextEditingController _module2Controller = new TextEditingController();
     TextEditingController _module3Controller = new TextEditingController();
@@ -56,7 +56,7 @@ class _ModulesState extends State<Modules> {
              TextFormField(
                style: TextStyle(color: Colors.grey[100]),
                cursorColor: Colors.tealAccent,
-               controller: _module1Controller,
+               controller: _module1Controller, 
               decoration: InputDecoration(
                 hintStyle: TextStyle(color: Colors.grey[100], fontSize: 15),
                 hintText: "Eg. CS2030, IS1103, MA1101R",
@@ -189,15 +189,7 @@ class _ModulesState extends State<Modules> {
           SizedBox(height: 100,),
           //displayUserModules(context, snapshot),
           RaisedButton(
-            onPressed: () async {
-              module1 = _module1Controller.text;
-              module2 = _module2Controller.text;
-              module3 = _module3Controller.text;
-              module4 = _module4Controller.text;
-              //module6 = _module6Controller.text;
-              module5 = _module5Controller.text;
-              //module7 = _module7Controller.text;
-
+            onPressed: () async {        
              final uid = await Provider.of(context).auth.getCurrentUID();
 
               await Firestore.instance.collection("users").document(uid)
@@ -212,6 +204,8 @@ class _ModulesState extends State<Modules> {
                       }, merge : true).then((_){
                         print("modules upload success!");
                       });
+
+                      //Navigator.of(context).pop();
 
               final snackBar = SnackBar(
               content: Text('Uploading of modules is successful!'),

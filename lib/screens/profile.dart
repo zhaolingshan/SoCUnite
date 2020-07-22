@@ -15,6 +15,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   String displayedUsername = 'old name';
+  final _form = GlobalKey<FormState>();
   File _userImageFile;
   //String _downloadURL;
   
@@ -22,12 +23,18 @@ class _ProfileState extends State<Profile> {
     _userImageFile = image;
   }
 
-  // Future downloadImage() async { 
-  //   String downloadAddress = await _reference.getDownloadURL();
-  //   setState(() {
-  //     _downloadURL = downloadAddress;
-  //   });
-  // }
+
+  bool validate() {
+    final form = _form.currentState;
+    form.save();
+    if(form.validate()) {
+      form.save();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -158,17 +165,19 @@ Widget displayUserInformation(context, snapshot) {
     showModalBottomSheet(
       backgroundColor: Colors.grey[900],
       context: context,
-      builder: (BuildContext bc) {
-        return Container(
+      builder: (c) {
+            return Container(
           height: MediaQuery.of(context).size.height * .60,
           child: Padding(
             padding: EdgeInsets.only(left: 15.0, top: 15.0),
+            child: Form(
+              key: _form,
             child: 
             Column(
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Text("Update Profile", style: TextStyle(color: Colors.grey[100]),),
+                    Text("Update username", style: TextStyle(color: Colors.grey[100]),),
                     Spacer(),
                     IconButton(
                       icon: Icon(Icons.cancel, color: Colors.white),
@@ -186,6 +195,12 @@ Widget displayUserInformation(context, snapshot) {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 15.0),
                         child: TextFormField(
+                          validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter a username.';
+                        }
+                          return null; 
+                        },
                           cursorColor: Colors.tealAccent,
                           style: TextStyle(
                             color: Colors.grey[100]),
@@ -209,31 +224,41 @@ Widget displayUserInformation(context, snapshot) {
                   children: <Widget>[
                     RaisedButton(
                       onPressed: () async { //change username/displayname
+                      if(validate()) {
+                      final uid = await Provider.of(context).auth.getCurrentUID();
 
                       FirebaseUser user = await Provider.of(context).auth.getCurrentUser();
                       UserUpdateInfo updateInfo = UserUpdateInfo();
                       updateInfo.displayName = _newUsernameController.text;
                       user.updateProfile(updateInfo);
-                      print('USERNAME IS: ${user.displayName}');
+                      //print('USERNAME IS: ${user.displayName}');
+
+                      await Firestore.instance.collection('users').document(uid).setData({
+                        'username': _newUsernameController.text,
+                      }, merge : true).then((_){
+                          print("changed username!");
+                      });
 
                       setState(() {
-                        displayedUsername = user.displayName;
+                        displayedUsername = user.displayName; 
                       });
-                        // final uid = await Provider.of(context).auth.getCurrentUID();
-                        // await Firestore.instance.collection('users').document(uid).updateData(
-                        //   {
-                        //     "username": _newUsernameController,
-                        //  });
-                        Navigator.pop(context);
-                        },
-                        // await Firestore.instance.collection('users').document(uid)
-                        // .setData({
-                        //   "username" : _newUsernameController,
-                        // },
-                        // merge: true).then((_) {
-                        //   print("successfully changed username!");
-                        // });
+                      Navigator.pop(context);
+                      //IMPLEMENTING SNACKBAR
+                      final snackBar = SnackBar(
+                        content: Text('Your username is changed! Re-enter page to view.'),
+                        duration: Duration(seconds: 5),
+                      );
 
+                      Scaffold.of(context).showSnackBar(snackBar);
+
+                      } 
+
+                    //   int count = 0;
+                    // Navigator.popUntil(context, (route) {
+                    // return count++ == 2;
+                    //   });
+                    },
+                        
                       color: Colors.blue[400],
                       shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50)),
@@ -248,7 +273,7 @@ Widget displayUserInformation(context, snapshot) {
                 ),
               ],
             ),
-          ),
+          ),)
         );
       },
     );

@@ -13,6 +13,10 @@ class Offers extends StatefulWidget {
 class _OffersState extends State<Offers> {
   String profilePicture;
   String username;
+
+  getUID() async { //returning instance of futuredynamic
+    return await Provider.of(context).auth.getCurrentUID();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -105,22 +109,96 @@ class _OffersState extends State<Offers> {
                       Text(post['timestamp'], 
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,
                       color: Colors.grey[400]),),
-                      Spacer(),   
+                      Spacer(), 
+                        FutureBuilder(
+                        future: getUID(), //returns uid
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.data == post['ownerid']) {
+                            return  IconButton(
+                              iconSize: 30,
+                              color: Colors.blue[300],
+                              icon: Icon(Icons.delete_forever),
+                              onPressed: () async {
+                                final uid = await Provider.of(context).auth.getCurrentUID();
+
+                        await Firestore.instance.collection('users').document(uid)
+                        .collection('private_offers').document(post.documentID).delete();
+
+                        await Firestore.instance.collection('public').document('internship_offers')
+                        .collection('Offers').document(post.documentID).delete();
+
+                       await Firestore.instance.collection('users').getDocuments().then((querySnapshot){
+                        querySnapshot.documents.forEach((result) { //result is each uid 
+                        Firestore.instance.collection('users').document(result.documentID)
+                        .collection('saved_offers').getDocuments().then((querySnapshot) {
+                        querySnapshot.documents.forEach((element) { //each element is each saved forum
+                        if(element.documentID == post.documentID) {
+                        Firestore.instance.collection('users').document(result.documentID)
+                        .collection('saved_offers').document(element.documentID).delete();
+                        }
+                        });
+                        });
+                        });
+                        });
+                              }
+                            );
+                          }
+                          else {
+                          return Container();
+                         }
+                        },
+                      ) 
                     ],),
                     ),
                     SizedBox(height: 10),
                     Row(children: <Widget>[
                       SizedBox(width: 10,),
-                      CircleAvatar(
-                      backgroundImage: post['profilePicture'] != null ?
-                      NetworkImage(post['profilePicture']) : 
-                      NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
-                      backgroundColor: Colors.grey,
-                      radius: 20,),
+                      FutureBuilder( 
+                future: Firestore.instance.collection('users').document(post['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if(snapshot.data != null) {
+                    if (snapshot.data['profilepicURL'] != null) {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(snapshot.data['profilepicURL'])
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      );
+                    }           
+                  } else {
+                    return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                      );
+                  } 
+                }),    
+                      // CircleAvatar(
+                      // backgroundImage: post['profilePicture'] != null ?
+                      // NetworkImage(post['profilePicture']) : 
+                      // NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      // backgroundColor: Colors.grey,
+                      // radius: 20,),
                       SizedBox(width: 10,),
-                      Text(post['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                    //   Text(post['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                    //   fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
+                    // )
+                    FutureBuilder( 
+                future: Firestore.instance.collection('users').document(post['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(snapshot.data['username'], style: TextStyle(fontWeight: FontWeight.bold,
                       fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
-                    )],),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }           
+                }, 
+              ),           
+                    ],),
                     SizedBox(height: 10),
                     Padding( 
                     padding: EdgeInsets.only(top: 4, bottom: 8),
@@ -193,10 +271,10 @@ class _OffersState extends State<Offers> {
                     ],)),
                     SizedBox(height: 20),
                     Row(children: <Widget>[
-                      SizedBox(width: 10,),
-                      Icon(Icons.comment, size: 26,
-                      color: Colors.tealAccent), 
-                      SizedBox(width: 6,),Text(' 0', style: TextStyle(color: Colors.grey[100]),), //change to icons
+                      // SizedBox(width: 10,),
+                      // Icon(Icons.comment, size: 26,
+                      // color: Colors.tealAccent), 
+                      // SizedBox(width: 6,),Text(' 0', style: TextStyle(color: Colors.grey[100]),), //change to icons
                       Spacer(),
                       Icon(Icons.thumb_up, size: 26, color: Colors.tealAccent),
                       SizedBox(width: 6,),Text(post['upvotes'].values.where((e)=> e as bool).length.toString(), style: TextStyle(color: Colors.grey[100])),

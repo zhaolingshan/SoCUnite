@@ -1,5 +1,6 @@
-import 'package:SoCUniteTwo/screens/studyjio_screens/floor_plan_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:SoCUniteTwo/models/place.dart';
+import 'package:SoCUniteTwo/screens/studyjio_screens/floor_plan_screen.dart';
 
 class BookARoomScreen extends StatefulWidget {
   @override
@@ -7,13 +8,37 @@ class BookARoomScreen extends StatefulWidget {
 }
 
 class _BookARoomScreenState extends State<BookARoomScreen> {
-  List<String> roomNames = [
-    'Tutorial Room 1 (TR1)',
-    'Tutorial Room 3 (TR3)',
-    'Seminar Room 1 (SR1)',
-    'Seminar Room 7 (SR7)',
-    'Discussion Room 1 (DR1)',
-    'Discussion Room 2 (DR2)',
+  List<Place> roomNames = [
+    Place(
+      id: DateTime.now().toString(),
+      title: 'Tutorial Room 1 (TR1)',
+      location: PlaceLocation(latitude: 1.2948066448369964, longitude:103.77154469490053),
+    ),
+    Place(
+      id: DateTime.now().toString(),
+      title: 'Tutorial Room 3 (TR3)',
+      location: PlaceLocation(latitude: 1.295353329958129, longitude: 103.77331128855921),
+    ),
+    Place(
+      id: DateTime.now().toString(),
+      title: 'Seminar Room 1 (SR1)',
+      location: PlaceLocation(latitude: 1.2950279706567276, longitude: 103.77393175616923),
+    ),
+    Place(
+      id: DateTime.now().toString(),
+      title: 'Seminar Room 3 (SR3)',
+      location: PlaceLocation(latitude: 1.2947910941174683, longitude: 103.77400841456318),
+    ),
+    Place(
+      id: DateTime.now().toString(),
+      title: 'Seminar Room 5 (SR5)',
+      location: PlaceLocation(latitude: 1.295399299579972, longitude: 103.77364859508984),
+    ),
+    Place(
+      id: DateTime.now().toString(),
+      title: 'Seminar Room 7 (SR7)',
+      location: PlaceLocation(latitude: 1.2949426312679213, longitude: 103.7740489892307),
+    ),
   ];
   List<String> unitNumbers = [
     'AS3 06-10',
@@ -24,6 +49,7 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
     'COM1 B-14A',
   ];
   String _chosenRoom = 'No chosen room';
+  Place _chosenPlace = Place(id: null, title: 'No chosen location', location: PlaceLocation(latitude: null, longitude: null));
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,10 +78,11 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
             child: ListTile(
               onTap: () {
                 setState(() {
-                  _chosenRoom = roomNames[0];
+                  _chosenPlace = roomNames[0];
+                  _chosenPlace.title = roomNames[0].title;
                 });
               },
-              title: Text(roomNames[0],
+              title: Text(roomNames[0].title,
                   style: TextStyle(fontSize: 20, color: Colors.grey[100])),
               subtitle: Text(unitNumbers[0],
                   style: TextStyle(fontSize: 18, color: Colors.grey[100])),
@@ -66,10 +93,11 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
             child: ListTile(
               onTap: () {
                 setState(() {
-                  _chosenRoom = roomNames[1];
+                  _chosenPlace = roomNames[1];
+                  _chosenPlace.title = roomNames[1].title;
                 });
               },
-              title: Text(roomNames[1],
+              title: Text(roomNames[1].title,
                   style: TextStyle(fontSize: 20, color: Colors.grey[100])),
               subtitle: Text(unitNumbers[1],
                   style: TextStyle(fontSize: 18, color: Colors.grey[100])),
@@ -80,10 +108,11 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
             child: ListTile(
               onTap: () {
                 setState(() {
-                  _chosenRoom = roomNames[2];
+                  _chosenPlace = roomNames[2];
+                  _chosenPlace.title = roomNames[2].title;
                 });
               },
-              title: Text(roomNames[2],
+              title: Text(roomNames[2].title,
                   style: TextStyle(fontSize: 20, color: Colors.grey[100])),
               subtitle: Text(unitNumbers[2],
                   style: TextStyle(fontSize: 18, color: Colors.grey[100])),
@@ -94,10 +123,11 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
             child: ListTile(
               onTap: () {
                 setState(() {
-                  _chosenRoom = roomNames[3];
+                  _chosenPlace = roomNames[3];
+                  _chosenPlace.title = roomNames[3].title;
                 });
               },
-              title: Text(roomNames[3],
+              title: Text(roomNames[3].title,
                   style: TextStyle(fontSize: 20, color: Colors.grey[100])),
               subtitle: Text(unitNumbers[3],
                   style: TextStyle(fontSize: 18, color: Colors.grey[100])),
@@ -108,10 +138,11 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
             child: ListTile(
               onTap: () {
                 setState(() {
-                  _chosenRoom = roomNames[4];
+                  _chosenPlace = roomNames[4];
+                  _chosenPlace.title = roomNames[4].title;
                 });
               },
-              title: Text(roomNames[4],
+              title: Text(roomNames[4].title,
                   style: TextStyle(fontSize: 20, color: Colors.grey[100])),
               subtitle: Text(unitNumbers[4],
                   style: TextStyle(fontSize: 18, color: Colors.grey[100])),
@@ -122,10 +153,11 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
             child: ListTile(
               onTap: () {
                 setState(() {
-                  _chosenRoom = roomNames[5];
+                  _chosenPlace = roomNames[5];
+                  _chosenPlace.title = roomNames[5].title;
                 });
               },
-              title: Text(roomNames[5],
+              title: Text(roomNames[5].title,
                   style: TextStyle(fontSize: 20, color: Colors.grey[100])),
               subtitle: Text(unitNumbers[5],
                   style: TextStyle(fontSize: 18, color: Colors.grey[200])),
@@ -164,7 +196,8 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
           ),
           RaisedButton(
               onPressed: () {
-                Navigator.pop(context, _chosenRoom);
+                _chosenRoom = _chosenPlace.title;
+                Navigator.pop(context, _chosenPlace);
               },
               color: Colors.blue[300],
               child: Padding(

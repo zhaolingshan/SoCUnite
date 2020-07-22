@@ -15,7 +15,7 @@ class ModuleScreen extends StatefulWidget { //list of modules
 
 class _ModuleScreenState extends State<ModuleScreen> {
   
-//List<String> modules = ['test', 'test', 'test', 'test', 'test']; //need to extract fields from document
+List<String> titles = []; //need to extract fields from document
 
   getModules() async {
     final uid = await Provider.of(context).auth.getCurrentUID();
@@ -83,14 +83,19 @@ class _ModuleScreenState extends State<ModuleScreen> {
             color: Colors.grey[850],
             child: ListTile( //must always display CS2030
               onTap: () {
+                if(titles[0] == 'CS2030') {
                 Navigator.push(context, 
               MaterialPageRoute(builder: (context) => CS2030()));
+                } else {
+                  return null;
+                }
               },
               title: //Text(modules[0], style: TextStyle(fontSize: 20, color: Colors.grey[100])),
               FutureBuilder(
               future: getModules(),
              builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
+                  titles.add(snapshot.data['module1']);               
                   return getmodule1(context, snapshot);
                 } else {
                   return CircularProgressIndicator();
@@ -103,13 +108,18 @@ class _ModuleScreenState extends State<ModuleScreen> {
               color: Colors.grey[850],
             child: ListTile(
               onTap: () {
+                if(titles[1] == 'CS2030') {
                 Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => CS2040S()));
+              MaterialPageRoute(builder: (context) => CS2030()));
+                } else {
+                  return null;
+                }
               },
               title: FutureBuilder(
               future: getModules(),
              builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
+                  titles.add(snapshot.data['module2']);
                   return getmodule2(context, snapshot);
                 } else {
                   return CircularProgressIndicator();
@@ -121,11 +131,19 @@ class _ModuleScreenState extends State<ModuleScreen> {
             Card(
               color: Colors.grey[850],
             child: ListTile(
-              onTap: () {},
+              onTap: () {
+                if(titles[2] == 'CS2030') {
+                Navigator.push(context, 
+              MaterialPageRoute(builder: (context) => CS2030()));
+                } else {
+                  return null;
+                }
+              },
               title:  FutureBuilder(
               future: getModules(),
              builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
+                  titles.add(snapshot.data['module3']);
                   return getmodule3(context, snapshot);
                 } else {
                   return CircularProgressIndicator();
@@ -137,11 +155,19 @@ class _ModuleScreenState extends State<ModuleScreen> {
             Card(
               color: Colors.grey[850],
             child: ListTile(
-              onTap: () {},
+              onTap: () {
+                if(titles[3] == 'CS2030') {
+                Navigator.push(context, 
+              MaterialPageRoute(builder: (context) => CS2030()));
+                } else {
+                  return null;
+                }
+              },
               title:  FutureBuilder(
               future: getModules(),
              builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
+                  titles.add(snapshot.data['module4']);
                   return getmodule4(context, snapshot);
                 } else {
                   return CircularProgressIndicator();
@@ -153,11 +179,20 @@ class _ModuleScreenState extends State<ModuleScreen> {
             Card(
               color: Colors.grey[850],
             child: ListTile(
-              onTap: (){},
+              onTap: (){
+                if(titles[4] == 'CS2030') {
+                Navigator.push(context, 
+              MaterialPageRoute(builder: (context) => CS2030()));
+                } else {
+                  return null;
+                }
+              },
               title:  FutureBuilder(
               future: getModules(),
              builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
+                  titles.add(snapshot.data['module5']);
+                  print(titles);
                   return getmodule5(context, snapshot);
                 } else {
                   return CircularProgressIndicator();

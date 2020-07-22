@@ -94,6 +94,7 @@ class _ForumCommentState extends State<ForumComment> {
                       widget.comment.profilePicture = profilePicture;
                       widget.comment.ownerid = uid;
                       widget.comment.upvotes = {uid: false};
+                      widget.comment.reported = {uid: false};
 
                       //final uid = await Provider.of(context).auth.getCurrentUID();
 
@@ -106,8 +107,9 @@ class _ForumCommentState extends State<ForumComment> {
                         'username': widget.comment.username,
                         'profilePicture': widget.comment.profilePicture,
                         'upvotes': widget.comment.upvotes,
-                        'ownerid': widget.post.ownerid,
+                        'ownerid': uid,
                         'documentid': '',
+                        'reported': widget.comment.reported,
                       }
                       );
 

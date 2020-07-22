@@ -15,6 +15,7 @@ class Collaboration { //for forums
   Map<String, dynamic> saved = {};
   Map<String, dynamic> upvotes = {};
   Map<String, dynamic> reported = {};
+  bool isResolved;
   
 
   Collaboration(
@@ -31,7 +32,8 @@ class Collaboration { //for forums
     this.saved,
     this.ownerid,
     this.upvotes,
-    this.reported
+    this.reported,
+    this.isResolved,
   );
 
   Collaboration.fromSnapshot(DocumentSnapshot snapshot) : 
@@ -46,5 +48,6 @@ class Collaboration { //for forums
   name = snapshot['name'],
   link = snapshot['link'],
   upvotes = snapshot['upvotes'],
+  ownerid = snapshot['ownerid'],
   saved = snapshot['saved'];
 }

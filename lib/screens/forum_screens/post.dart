@@ -13,6 +13,7 @@ class Post { //for forums
   Map<String, dynamic> saved = {};
   Map<String, dynamic> upvotes = {};
   Map<String, dynamic> reported = {};
+  bool isResolved;
   
 
 
@@ -28,7 +29,7 @@ class Post { //for forums
     this.saved,
     this.upvotes,
     this.reported,
-    //this.image
+    this.isResolved,
   );
 
   Post.fromSnapshot(DocumentSnapshot snapshot) : 

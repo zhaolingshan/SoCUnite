@@ -14,6 +14,7 @@ import 'package:SoCUniteTwo/screens/forum_screens/module_screen.dart';
 import 'package:SoCUniteTwo/myPosts/myposts.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/internship_offers/offers.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/experiences/experiences.dart';
+import 'package:SoCUniteTwo/screens/settings.dart';
 
 
 
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         '/collaborations': (BuildContext context) => Collaborations(),
         '/offers': (BuildContext context) => Offers(),
         '/experiences': (BuildContext context) => Experiences(),
+        '/settings': (BuildContext context) => Settings(),
       },
     )
   );

@@ -66,9 +66,9 @@ class _UpvoteexperiencesState extends State<Upvoteexperiences> {
                   print("upvote comment successfully saved to firebase!");
                 });     
             },
-            icon: Icon(_isUpvoted ? Icons.arrow_upward : Icons.arrow_upward,
+            icon: Icon(_isUpvoted ? Icons.favorite : Icons.favorite_border,
              size: 25,
-             color: _isUpvoted ?  Colors.tealAccent : Colors.grey[100],),),
+             color: _isUpvoted ?  Colors.pink : Colors.pink,),),
         Text(widget.comment.upvotes.values.where((e)=> e as bool).length.toString(), style: TextStyle(color: Colors.grey[100]),),
       ],
     );

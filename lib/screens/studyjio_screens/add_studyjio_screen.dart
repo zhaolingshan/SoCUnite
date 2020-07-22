@@ -7,8 +7,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'dart:io';
 import 'package:SoCUniteTwo/providers/studyjio.dart';
 import 'package:SoCUniteTwo/widgets/provider_widget.dart';
+import 'package:SoCUniteTwo/models/place.dart';
 
 class AddStudyJioScreen extends StatefulWidget {
+  static String showTitleforMap = '';
+  static GeoPoint showLocationOnMap = GeoPoint(null, null);
   // final Studyjio studyjio; //= new Studyjio(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 
    //AddStudyJioScreen({Key key, @required this.studyjio}) : super(key: key);
@@ -33,6 +36,7 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
   final _form = GlobalKey<FormState>();
   DateTime _date = DateTime.now();
   String getLocation = '';
+  GeoPoint getLocationOnMap = GeoPoint(null, null);
   TextEditingController _titleController = new TextEditingController();
   TextEditingController _descriptionController = new TextEditingController();
   TextEditingController _dateController = new TextEditingController();
@@ -82,7 +86,7 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
       ),
       body: Builder(
         builder: (BuildContext context) {
-          return Padding(
+        return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _form,
@@ -235,7 +239,7 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                             time = picked;
                           });
                         }
-                      },
+                  },
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please provide an end time.';
@@ -301,6 +305,7 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                       onPressed: () {
                         setState(() {
                          _didUserChooseOnline = true; 
+                         getLocation = 'Online';
                         });
                       },
                     ),
@@ -335,16 +340,19 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                       ),
                     ],
                   ),
-                  
+                 
                   SizedBox(height: 20, width: 50,),
                   RaisedButton(
                     color: Colors.blue[300],
                     child: Text("Confirm"),
                     onPressed: () async {
-                      studyjio = Studyjio(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+                      studyjio = Studyjio(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
                       final uid = await Provider.of(context).auth.getCurrentUID(); 
                       final DocumentSnapshot snapshot = await Firestore.instance.collection('users').document(uid).get();
                       String getUsername = snapshot.data['username'];
+
+                      AddStudyJioScreen.showTitleforMap = studyjio.title;
+                      AddStudyJioScreen.showLocationOnMap = studyjio.locationOnMap;
 
                       if (validate()) {
 
@@ -367,6 +375,7 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                         studyjio.joinedUsers = {getUsername: true};
                         studyjio.currentCount = 1;
                         studyjio.location = getLocation;
+                        studyjio.locationOnMap = getLocationOnMap;
                         studyjio.username = username;
 
                         final DocumentReference documentReference = 
@@ -384,6 +393,7 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                             'currentCount':studyjio.currentCount,
                             'location':studyjio.location,
                             'username': studyjio.username,
+                            'locationOnMap': studyjio.locationOnMap, 
                           });
 
                         final String documentId = documentReference.documentID;
@@ -409,9 +419,11 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                           'currentCount':studyjio.currentCount,
                           'location': studyjio.location,
                           'username': studyjio.username,
+                          'locationOnMap': studyjio.locationOnMap, 
                         });
-                        print('done');
-                        Navigator.pop(context);
+                        
+                        Navigator.of(context).pop();
+                        _showAlertDialog();
                       }
                     }
                 ), 
@@ -426,33 +438,73 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
   }
 
    _navigateAndDisplaySelectionforLocation(BuildContext context) async {
-    final result = await Navigator.push(
+    Place result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChooseALocationScreen(),
       )
     );
+    String location = result.title;
     Scaffold.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text("Your chosen location: $result")));
+              ..removeCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text("Your chosen location: $location")));
     setState(() {
-      getLocation = result;
+      getLocation = location;
+      getLocationOnMap = GeoPoint(result.location.latitude, result.location.longitude);
     });
   }
 
   _navigateAndDisplaySelectionforRoom(BuildContext context) async {
-    final result = await Navigator.push(
+    Place result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => BookARoomScreen(),
       )
     );
+    String room = result.title;
     Scaffold.of(context)
       ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text("Your chosen location: $result")));
+      ..showSnackBar(SnackBar(content: Text("Your chosen location: $room")));
     setState(() {
-      getLocation = result;
+      getLocation = room;
+      getLocationOnMap = GeoPoint(result.location.latitude, result.location.longitude);
     });
+  }
+
+  void _showAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+   padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 20, bottom: 20),
+   child:
+        AlertDialog(
+          backgroundColor: Colors.grey[850],
+          title: new Text(
+            "Important",
+            style: TextStyle(color: Colors.blue[300]),
+            ),
+          content: Text(
+            'You are not allowed to delete the study-jio you have created within 30 minutes before your chosen start time.',
+            style: TextStyle(color: Colors.grey[100]),
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              color: Colors.blue[300],
+              child: new Text(
+                "Noted",
+                style: TextStyle(color: Colors.black),
+              ),
+              onPressed: () async {               
+                  Navigator.of(context).pop();
+                  //Navigator.popUntil(context, ModalRoute.withName('/studyjios'));
+              },
+            ),
+          ],
+        ),
+        );
+      },
+    );
   }
 
   /* @override
@@ -477,28 +529,4 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
     _isInit = false;
     super.didChangeDependencies();
   } */
-
-  /* @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      final studyjioId = ModalRoute.of(context).settings.arguments as String;
-      if (studyjioId != null) {
-        _editedStudyjio = Provider.of<Studyjio>(context, listen: false).findbyId(studyjioId);
-        _initValues = {
-          'title': _editedStudyjio.title,
-          'description': _editedStudyjio.description,
-          'isOffline': _editedStudyjio.isOffline.toString(),
-          'modules': _editedStudyjio.modules.toString(),
-          'date': _editedStudyjio.date.toString(),
-          'startTime': _editedStudyjio.startTime,
-          'endTime': _editedStudyjio.endTime,
-          'capacity': _editedStudyjio.capacity.toString(),
-          'bookRoom': _editedStudyjio.bookRoom.toString(),
-        };
-      } 
-    }
-    _isInit = false;
-    super.didChangeDependencies();
-  } */
-
 }

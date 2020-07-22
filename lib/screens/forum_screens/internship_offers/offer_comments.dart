@@ -86,7 +86,8 @@ class _OfferCommentState extends State<OfferComment> {
                       widget.comment.username = username;
                       widget.comment.profilePicture = profilePicture;
                       widget.comment.ownerid = uid;
-                      widget.comment.upvotes = {uid: false};          
+                      widget.comment.upvotes = {uid: false}; 
+                       widget.comment.reported = {uid: false};         
 
                       final DocumentReference documentReference = 
                       await Firestore.instance.collection("public").document('internship_offers')
@@ -97,8 +98,9 @@ class _OfferCommentState extends State<OfferComment> {
                         'username': widget.comment.username,
                         'profilePicture': widget.comment.profilePicture,
                         'upvotes': widget.comment.upvotes,
-                        'ownerid': widget.post.ownerid,
+                        'ownerid': uid,
                         'documentid': '',
+                        'reported': widget.post.reported,
                       }
                       );
 

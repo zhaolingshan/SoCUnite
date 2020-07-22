@@ -284,7 +284,7 @@ class _New2030State extends State<New2030> {
               widget.post.saved = {uid: false};
               widget.post.upvotes =  {uid: false};
               widget.post.reported = {uid: false};
-              
+              widget.post.isResolved = false; //shows null
               widget.post.ownerid = uid;
               
               final DocumentReference documentReference = 
@@ -293,7 +293,7 @@ class _New2030State extends State<New2030> {
                 'title': widget.post.title,
                 'content': widget.post.content,
                 'timestamp': widget.post.timestamp,
-                'imageurl': widget.post.imageurl, //shows null
+                'imageurl': widget.post.imageurl, 
                 'username': widget.post.username,
                 'profilePicture' : widget.post.profilePicture,
                 'documentid': '',
@@ -301,6 +301,7 @@ class _New2030State extends State<New2030> {
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
                 'reported': widget.post.reported,
+                'isResolved': widget.post.isResolved,
               });
 
               final String documentid = documentReference.documentID;
@@ -324,6 +325,7 @@ class _New2030State extends State<New2030> {
                 'saved': widget.post.saved,
                 'upvotes': widget.post.upvotes,
                 'reported': widget.post.reported,
+                'isResolved': widget.post.isResolved,
               });
               
               Navigator.pop(context);

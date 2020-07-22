@@ -1,3 +1,4 @@
+import 'package:SoCUniteTwo/screens/comments_report/report_notecomment.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/details/comments.dart';
 import 'package:SoCUniteTwo/screens/forum_screens/post_notes.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,8 @@ import 'package:SoCUniteTwo/widgets/provider_widget.dart';
 
 
 
-class NotesDetails extends StatefulWidget {
 
+class NotesDetails extends StatefulWidget {
   final PostNotes note;
   NotesDetails({Key key, @required this.note}) : super(key: key);
   @override
@@ -21,6 +22,10 @@ class _NotesDetailsState extends State<NotesDetails> {
 
   bool isSaved = false;
   bool isUpvoted = false;
+
+  getUID() async { 
+    return await Provider.of(context).auth.getCurrentUID();
+  }
  
 
  _saved() async {
@@ -104,9 +109,11 @@ class _NotesDetailsState extends State<NotesDetails> {
     });
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
-    final comment = new Comments(null,null,null,null,null,null,null);
+    final comment = new Comments(null,null,null,null,null,null,null,null);
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -141,16 +148,42 @@ class _NotesDetailsState extends State<NotesDetails> {
                     Row(children: <Widget>[
                       //profile pic username
                       SizedBox(width: 10,),
-                      CircleAvatar(
-                      backgroundImage: 
-                      widget.note.profilePicture == null ?
-                      NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png')
-                      : NetworkImage(widget.note.profilePicture),
-                      backgroundColor: Colors.grey,
-                      radius: 30,),
+                     FutureBuilder( 
+                future: Firestore.instance.collection('users').document(widget.note.ownerid).get(),
+                builder: (context, snapshot) {
+                  if(snapshot.data != null) {
+                    if (snapshot.data['profilepicURL'] != null) {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(snapshot.data['profilepicURL'])
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      );
+                    }           
+                  } else {
+                    return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                      );
+                  } 
+                }),  
                       SizedBox(width: 10,),
-                      Text(widget.note.username, style: TextStyle(fontWeight: FontWeight.bold,
-                      fontSize: 18, decoration: TextDecoration.underline, color: Colors.grey[100])),
+                       FutureBuilder( 
+                future: Firestore.instance.collection('users').document(widget.note.ownerid).get(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(snapshot.data['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                      fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }           
+                }, 
+              ),        
                       Spacer(),
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 30,), 
@@ -353,22 +386,70 @@ class _NotesDetailsState extends State<NotesDetails> {
                       Text(comment['timestamp'], 
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,
                       color: Colors.grey[400]),),
-                      Spacer(),   
+                      Spacer(), 
+                      FutureBuilder(
+                        future: getUID(), //returns uid
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (snapshot.data == comment['ownerid']) {
+                            return  IconButton(
+                              iconSize: 30,
+                              color: Colors.red,
+                              icon: Icon(Icons.delete_forever),
+                              onPressed: () async {
+                                //final uid = await Provider.of(context).auth.getCurrentUID();
+                                await Firestore.instance.collection('public').document('CS2030')
+                                .collection('Notes').document(widget.note.documentid).
+                                collection('comments').document(comment.documentID).delete();
+                              }
+                            );
+                          }
+                          else {
+                          return Container();
+                         }
+                        },
+                      )
                     ],),
                     ),
                     SizedBox(height: 10),
                     Row(children: <Widget>[
                       SizedBox(width: 10,),
-                      CircleAvatar(
-                      backgroundImage: comment['profilePicture'] != null ?
-                      NetworkImage(comment['profilePicture']) : 
-                      NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
-                      backgroundColor: Colors.grey,
-                      radius: 20,),
+                     FutureBuilder( 
+                future: Firestore.instance.collection('users').document(comment['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if(snapshot.data != null) {
+                    if (snapshot.data['profilepicURL'] != null) {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(snapshot.data['profilepicURL'])
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage('https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png'),
+                      );
+                    }           
+                  } else {
+                    return CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                      );
+                  } 
+                }), 
                       SizedBox(width: 10,),
-                      Text(comment['username'], style: TextStyle(fontWeight: FontWeight.bold,
+                      FutureBuilder( 
+                future: Firestore.instance.collection('users').document(comment['ownerid']).get(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(snapshot.data['username'], style: TextStyle(fontWeight: FontWeight.bold,
                       fontSize: 16, decoration: TextDecoration.underline, color: Colors.grey[100]),
-                    )],),
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }           
+                }, 
+              ),        
+                    ],),
                     SizedBox(height: 10),
                     Padding( 
                     padding: EdgeInsets.only(top: 4, bottom: 8),
@@ -386,8 +467,8 @@ class _NotesDetailsState extends State<NotesDetails> {
                       IconButton(
                         icon: Icon(Icons.flag, color: Colors.red, size: 25,), 
                       onPressed: () { //report post
-              //           Navigator.push(context, 
-              // MaterialPageRoute(builder: (context) => Report(post: widget.note)));
+                        Navigator.push(context, 
+              MaterialPageRoute(builder: (context) => ReportNoteComment(post: widget.note, comment: commentPosted,)));
                       },),
                       Text("Report comment", style: TextStyle(fontSize: 14,
                       decoration: TextDecoration.underline, color: Colors.grey[100]),),

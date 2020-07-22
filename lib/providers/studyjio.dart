@@ -17,6 +17,8 @@ class Studyjio {
   int currentCount; 
   String ownerId; 
   Map<String, dynamic> joinedUsers = {};
+  GeoPoint locationOnMap;
+
 
    Studyjio(
   this.documentId,
@@ -35,6 +37,7 @@ class Studyjio {
     this.currentCount,
    this.ownerId,
    this.joinedUsers,
+   this.locationOnMap,
    );
 
   Studyjio.fromSnapshot(DocumentSnapshot snapshot) : 
@@ -53,6 +56,7 @@ class Studyjio {
   location = snapshot['location'],
   currentCount = snapshot['currentCount'],
   ownerId = snapshot['ownerId'],
+  locationOnMap = snapshot['locationOnMap'],
   joinedUsers = snapshot['joinedUsers']; 
 
   /* void toggleJoinStatus() {

@@ -42,7 +42,7 @@ class _StudyjiosOverviewScreenState extends State<StudyjiosOverviewScreen> {
             ? Text("My Study Jios")
             : showJoined 
               ? Text("Joined Study Jios")
-              : Text("Browse Study Jios"),
+              : Text("All Study Jios"),
           bottom: TabBar(
             tabs: [
               Tab(icon: Icon(Icons.list, color: Colors.tealAccent), text: 'LIST VIEW'),
@@ -90,7 +90,7 @@ class _StudyjiosOverviewScreenState extends State<StudyjiosOverviewScreen> {
               ),
               itemBuilder: (_) => [
                 PopupMenuItem(child: Text('My Study-jios'), value: FilterOptions.Mine),
-                PopupMenuItem(child: Text('Browse Study-jios'), value: FilterOptions.All),
+                PopupMenuItem(child: Text('All Study-jios'), value: FilterOptions.All),
                 PopupMenuItem(child: Text('Joined Study-jios'), value: FilterOptions.Joined),
               ],
             )   
