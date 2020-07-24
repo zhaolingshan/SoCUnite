@@ -7,6 +7,7 @@ import 'package:SoCUniteTwo/widgets/provider_widget.dart';
 //import 'package:SoCUniteTwo/widgets/studyjios/joinstudyjio.dart';
 import 'package:SoCUniteTwo/screens/studyjio_screens/book_a_room_screen.dart';
 import 'package:SoCUniteTwo/screens/studyjio_screens/choose_a_location_screen.dart';
+import 'package:SoCUniteTwo/models/place.dart';
 
 class StudyjioDetailScreen extends StatefulWidget {
   final Studyjio studyjio;
@@ -19,6 +20,7 @@ class StudyjioDetailScreen extends StatefulWidget {
 class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
   final _form = GlobalKey<FormState>();
   String getLocation = '';
+  GeoPoint getLocationOnMap = GeoPoint(null, null);
   String listOfUsersJoined = '';
   
   getUID() async {
@@ -37,38 +39,43 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
   }
 
   _navigateAndDisplaySelectionforLocation(BuildContext context) async {
-    final result = await Navigator.push(
+    Place result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChooseALocationScreen(),
       )
     );
+    String location = result.title;
     Scaffold.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text("Your chosen location: $result")));
+              ..removeCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text("Your chosen location: $location")));
     setState(() {
-      getLocation = result;
+      getLocation = location;
+      getLocationOnMap = GeoPoint(result.location.latitude, result.location.longitude);
     });
   }
   
   _navigateAndDisplaySelectionforRoom(BuildContext context) async {
-    final result = await Navigator.push(
+    Place result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => BookARoomScreen(),
       )
     );
+    String room = result.title;
     Scaffold.of(context)
       ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text("Your chosen location: $result")));
+      ..showSnackBar(SnackBar(content: Text("Your chosen location: $room")));
     setState(() {
-      getLocation = result;
+      getLocation = room;
+      getLocationOnMap = GeoPoint(result.location.latitude, result.location.longitude);
     });
   }
 
   void _editTitleModalBottomSheet(BuildContext context) {
 
     TextEditingController _newTitleController = new TextEditingController();
+
     showModalBottomSheet(
       backgroundColor: Colors.grey[900],
       context: context, 
@@ -142,13 +149,42 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                       if (validate()) {
                         await Firestore.instance.collection('browse_jios')
                         .document(widget.studyjio.documentId)
-                        .updateData({
+                        .setData({
                           'title': _newTitleController.text,
+                        }, merge: true).then((_) {
+                       });
+
+                        await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
+                        .collection('my_studyjios').document(widget.studyjio.documentId)
+                        .setData({
+                          'title': _newTitleController.text,
+                        }, merge: true).then((_) {
+                       });
+
+                          await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                    querySnapshot.documents.forEach((result) {
+                      Firestore.instance.collection('users').document(result.documentID)
+                      .collection('joined_studyjios').getDocuments().then((querySnapshot) {
+                        querySnapshot.documents.forEach((element) { 
+                          if (element.documentID == widget.studyjio.documentId) {
+                            Firestore.instance.collection('users').document(result.documentID) 
+                            .collection('joined_studyjios').document(element.documentID)
+                            .setData({
+                               'title': _newTitleController.text,
+                            }, merge: true).then((_) {
+                              print("joined uploaded to firebase");
+                            });
+                          }
                         });
+                      });  
+                    });
+                  }); //updating joined collection
+
 
                         Navigator.pop(context);
+                        String snackBarTitle = 'New title: ' + _newTitleController.text;
                         final snackBar = SnackBar(
-                        content: Text('Title is changed! Re-enter details-page to view.'),
+                        content: Text(snackBarTitle, overflow: TextOverflow.ellipsis, maxLines: 2),
                         duration: Duration(seconds: 5),
                       );
 
@@ -247,14 +283,16 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
 
                         await Firestore.instance.collection('browse_jios')
                         .document(widget.studyjio.documentId)
-                        .updateData({
+                        .setData({
                           'description': _newDescriptionController.text,
-                        }); //updating browse collection
+                        }, merge: true).then((_) {
+                       }); //updating browse collection
 
                         await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
                     .collection('my_studyjios').document(widget.studyjio.documentId)
-                    .updateData({
+                    .setData({
                       'description': _newDescriptionController.text,
+                    }, merge: true).then((_) {
                     }); //updating owners collection
 
                        await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
@@ -268,7 +306,7 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                             .setData({
                                'description': _newDescriptionController.text,
                             }, merge: true).then((_) {
-                              print("joined uploaded to firebase");
+                              //print("joined uploaded to firebase");
                             });
                           }
                         });
@@ -276,10 +314,10 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                     });
                   }); //updating joined collection
 
-
                         Navigator.pop(context);
+                        String snackBarTitle = 'New Description: ' + _newDescriptionController.text;
                         final snackBar = SnackBar(
-                        content: Text('Description is changed! Re-enter page to view.'),
+                        content: Text(snackBarTitle, overflow: TextOverflow.ellipsis, maxLines: 2),
                         duration: Duration(seconds: 5),
                       );
 
@@ -388,14 +426,16 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                       if (validate()) {
                         await Firestore.instance.collection('browse_jios')
                         .document(widget.studyjio.documentId)
-                        .updateData({
+                        .setData({
                           'date': _newDateController.text,
-                        }); //updating browse collection
+                        }, merge: true).then((_) {
+                    }); //updating browse collection
 
-                         await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
+                        await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
                     .collection('my_studyjios').document(widget.studyjio.documentId)
-                    .updateData({
-                       'date': _newDateController.text,
+                    .setData({
+                      'date': _newDateController.text,
+                    }, merge: true).then((_) {
                     }); //updating owners collection
 
                        await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
@@ -418,9 +458,9 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                   }); //updating joined collection                       
                        
                         Navigator.pop(context);
-
-                         final snackBar = SnackBar(
-                        content: Text('Date is changed! Re-enter page to view.'),
+                        String snackBarTitle = 'New Date: ' + _newDateController.text;
+                        final snackBar = SnackBar(
+                        content: Text(snackBarTitle, overflow: TextOverflow.ellipsis, maxLines: 2,),
                         duration: Duration(seconds: 5),
                       );
 
@@ -525,15 +565,19 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                       if (validate()) {
                         await Firestore.instance.collection('browse_jios')
                         .document(widget.studyjio.documentId)
-                        .updateData({
+                        .setData({
                           'startTime': _newStartTimeController.text,
+                        }, merge: true).then((_) {
+                              print("joined uploaded to firebase");
                         }); 
 
                         await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
                     .collection('my_studyjios').document(widget.studyjio.documentId)
-                    .updateData({
+                    .setData({
                        'startTime': _newStartTimeController.text,
-                    }); //updating owners collection
+                    }, merge: true).then((_) {
+                              print("joined uploaded to firebase");
+                            }); //updating owners collection
 
                        await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
                     querySnapshot.documents.forEach((result) {
@@ -556,8 +600,9 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
 
                         Navigator.pop(context);
 
+                        String snackBarTitle = 'New Start Time: ' + _newStartTimeController.text;
                         final snackBar = SnackBar(
-                        content: Text('Starting time is changed! Re-enter page to view.'),
+                        content: Text(snackBarTitle, overflow: TextOverflow.ellipsis, maxLines: 2),
                         duration: Duration(seconds: 5),
                       );
 
@@ -662,14 +707,18 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                       if (validate()) {
                         await Firestore.instance.collection('browse_jios')
                         .document(widget.studyjio.documentId)
-                        .updateData({
+                        .setData({
                           'endTime': _newEndTimeController.text,
-                        });
+                        }, merge: true).then((_) {
+                              print("joined uploaded to firebase");
+                            });
 
-                            await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
+                      await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
                     .collection('my_studyjios').document(widget.studyjio.documentId)
-                    .updateData({
+                    .setData({
                        'endTime': _newEndTimeController.text,
+                    }, merge: true).then((_) {
+                              print("joined uploaded to firebase");
                     }); //updating owners collection
 
                        await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
@@ -692,8 +741,9 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                   }); //updating joined collection                          
                         Navigator.pop(context);
 
+                        String snackBarTitle = 'New End Time: ' + _newEndTimeController.text;
                         final snackBar = SnackBar(
-                        content: Text('Ending time is changed! Re-enter page to view.'),
+                        content: Text(snackBarTitle, overflow: TextOverflow.ellipsis, maxLines: 2,),
                         duration: Duration(seconds: 5),
                       );
 
@@ -788,15 +838,19 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                       if (validate()) {
                         await Firestore.instance.collection('browse_jios')
                         .document(widget.studyjio.documentId)
-                        .updateData({
+                        .setData({
                           'modules': _newModulesController.text,
-                        });
+                        },merge: true).then((_) {
+                              print("joined uploaded to firebase");
+                            });
 
                         await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
                     .collection('my_studyjios').document(widget.studyjio.documentId)
-                    .updateData({
+                    .setData({
                          'modules': _newModulesController.text,
-                    }); //updating owners collection
+                    },merge: true).then((_) {
+                              print("joined uploaded to firebase");
+                    });//updating owners collection
 
                        await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
                     querySnapshot.documents.forEach((result) {
@@ -818,8 +872,9 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                   }); //updating joined collection                                                 
                         Navigator.pop(context);
 
+                        String snackBarTitle = 'New Module(s): ' + _newModulesController.text;
                         final snackBar = SnackBar(
-                        content: Text('Modules for revision is changed! Re-enter page to view.'),
+                        content: Text(snackBarTitle, overflow: TextOverflow.ellipsis, maxLines: 2,),
                         duration: Duration(seconds: 5),
                       );
 
@@ -918,15 +973,19 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                       if (validate()) {
                         await Firestore.instance.collection('browse_jios')
                         .document(widget.studyjio.documentId)
-                        .updateData({
+                        .setData({
                           'capacity': int.parse(_newCapacityController.text),
-                        });
+                        }, merge: true).then((_) {
+                              print("joined uploaded to firebase");
+                            });
 
                       await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
                     .collection('my_studyjios').document(widget.studyjio.documentId)
-                    .updateData({
+                    .setData({
                          'capacity': int.parse(_newCapacityController.text),
-                    }); //updating owners collection
+                    }, merge: true).then((_) {
+                              print("joined uploaded to firebase");
+                            }); //updating owners collection
 
                        await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
                     querySnapshot.documents.forEach((result) {
@@ -947,8 +1006,9 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                     });
                   }); //updating joined collection                                             
                         Navigator.pop(context);
+                        String snackBarTitle = 'New Capacity: ' + _newCapacityController.text;
                         final snackBar = SnackBar(
-                        content: Text('Capacity is changed! Re-enter page to view.'),
+                        content: Text(snackBarTitle, overflow: TextOverflow.ellipsis, maxLines: 2,),
                         duration: Duration(seconds: 5),
                       );
 
@@ -966,7 +1026,7 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
   }
 
   void _editLocationModalBottomSheet(BuildContext context) {
-    bool _didUserChooseOnline = true;
+    //bool _didUserChooseOnline = true;
 
     showModalBottomSheet(
       backgroundColor: Colors.grey[900],
@@ -999,6 +1059,7 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                       ),
                     ],
                   ),
+                  SizedBox(height: 40,),
                   ButtonBar(
                   alignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -1008,41 +1069,32 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                       ),
                       onPressed: () {
                         setState(() {
-                         _didUserChooseOnline = true; 
+                         //_didUserChooseOnline = true; 
+                         getLocation = 'Online';
+                         getLocationOnMap = GeoPoint(40.7128, 74.0060);
                         });
                       },
                     ),
                     RaisedButton(
-                      child: Text(
-                        'Offline',
-                      ),
+                      child: Text('Choose a Location'),
                       onPressed: () {
+                        _navigateAndDisplaySelectionforLocation(context);
                         setState(() {
-                         _didUserChooseOnline = false; 
+                          //_didUserChooseOnline = false;
+                        }); 
+                      },
+                    ),
+                    RaisedButton(
+                      child: Text('Book a Room'),
+                      onPressed: () {
+                        _navigateAndDisplaySelectionforRoom(context);
+                        setState(() {
+                          //_didUserChooseOnline = false;
                         });
                       },
                     ),
                   ],
                 ),
-                _didUserChooseOnline
-                  ? Container()
-                  : ButtonBar(
-                    alignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      RaisedButton(
-                        child: Text('Choose a Location'),
-                        onPressed: () {
-                          _navigateAndDisplaySelectionforLocation(context);
-                        },
-                      ),
-                      RaisedButton(
-                        child: Text('Book a Room'),
-                        onPressed: () {
-                          _navigateAndDisplaySelectionforRoom(context);
-                        },
-                      ),
-                    ],
-                  ),
                   SizedBox(height: 30,),
                   RaisedButton(
                     color: Colors.blue[400],
@@ -1062,16 +1114,22 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                     onPressed: () async {
                       await Firestore.instance.collection('browse_jios')
                       .document(widget.studyjio.documentId)
-                      .updateData({
+                      .setData({
                         'location': getLocation,
-                        //need to update geopoint as well
+                        'locationOnMap': getLocationOnMap,
+                      }, merge: true).then((_) {
+                        print("set data in browse jios");
                       });
 
-                       await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
+                    await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
                     .collection('my_studyjios').document(widget.studyjio.documentId)
-                    .updateData({
+                    .setData({
                         'location': getLocation,
-                    }); //updating owners collection
+                        'locationOnMap': getLocationOnMap,
+                    }, merge: true).then((_) {
+                        print("set data in my jios");
+                    });
+                     //updating owners collection
 
                        await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
                     querySnapshot.documents.forEach((result) {
@@ -1083,6 +1141,7 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                             .collection('joined_studyjios').document(element.documentID)
                             .setData({
                                 'location': getLocation,
+                                'locationOnMap': getLocationOnMap,
                             }, merge: true).then((_) {
                               print("joined uploaded to firebase");
                             });
@@ -1092,13 +1151,6 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                     });
                   }); //updating joined collection                                
                       Navigator.pop(context);
-
-                      final snackBar = SnackBar(
-                        content: Text('Location is changed! Re-enter page to view.'),
-                        duration: Duration(seconds: 5),
-                      );
-
-                      Scaffold.of(context).showSnackBar(snackBar);
                     },
                   )
                 ],

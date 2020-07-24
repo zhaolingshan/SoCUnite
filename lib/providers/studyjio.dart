@@ -1,4 +1,7 @@
+import 'package:SoCUniteTwo/screens/chat_screens/studyjio_chat_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+//import 'package:SoCUniteTwo/providers/chat.dart';
 
 class Studyjio {
   String documentId;
@@ -18,7 +21,8 @@ class Studyjio {
   String ownerId; 
   Map<String, dynamic> joinedUsers = {};
   GeoPoint locationOnMap;
-
+  //Chat chat;
+  StudyjioChatScreen chatScreen;
 
    Studyjio(
   this.documentId,
@@ -38,6 +42,8 @@ class Studyjio {
    this.ownerId,
    this.joinedUsers,
    this.locationOnMap,
+  //this.chat,
+   this.chatScreen,
    );
 
   Studyjio.fromSnapshot(DocumentSnapshot snapshot) : 
@@ -57,7 +63,9 @@ class Studyjio {
   currentCount = snapshot['currentCount'],
   ownerId = snapshot['ownerId'],
   locationOnMap = snapshot['locationOnMap'],
-  joinedUsers = snapshot['joinedUsers']; 
+  joinedUsers = snapshot['joinedUsers'];
+  //chat = snapshot['chat'],
+  //chatScreen = snapshot['chatScreen'];
 
   /* void toggleJoinStatus() {
     isJoined = !isJoined;

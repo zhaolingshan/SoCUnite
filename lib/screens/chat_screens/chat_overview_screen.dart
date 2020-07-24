@@ -1,6 +1,6 @@
-import 'package:SoCUniteTwo/screens/chat_screens/modules_chats_screen.dart';
-import 'package:SoCUniteTwo/screens/chat_screens/myjios_chats_screen.dart';
-import 'package:SoCUniteTwo/screens/chat_screens/studyjios_chats_screen.dart';
+import 'package:SoCUniteTwo/screens/chat_screens/moduleschats_listview_screen.dart';
+import 'package:SoCUniteTwo/screens/chat_screens/myjioschats_listview_screen.dart';
+import 'package:SoCUniteTwo/screens/chat_screens/studyjioschats_listview_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:SoCUniteTwo/screens/chat_screens/add_chatroom_screen.dart';
@@ -46,9 +46,9 @@ class _ChatOverviewScreenState extends State<ChatOverviewScreen> {
       body: 
           TabBarView(
             children: [
-              ModulesChatsScreen(),
-              MyjiosChatsScreen(),
-              StudyjiosChatsScreen(),
+              ModulesChatsListviewScreen(),
+              MyjiosChatsListviewScreen(),
+              StudyjiosChatsListviewScreen(),
             ],
           ),
       ),

@@ -1,6 +1,8 @@
+//import 'package:SoCUniteTwo/providers/module.dart';
 import 'package:flutter/material.dart';
 import 'package:SoCUniteTwo/widgets/provider_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class Modules extends StatefulWidget {
@@ -10,13 +12,27 @@ class Modules extends StatefulWidget {
 }
 
 class _ModulesState extends State<Modules> {
+  
+  // getModules() async {
+  //   final uid = await Provider.of(context).auth.getCurrentUID();
+  //   DocumentSnapshot doc = await Firestore.instance.collection('users').document(uid).collection('settings')
+  //   .document('modules').get();
+  //   return doc;
+  // } //ORIGINAL
 
   getModules() async {
-    final uid = await Provider.of(context).auth.getCurrentUID();
-    DocumentSnapshot doc = await Firestore.instance.collection('users').document(uid).collection('settings')
-    .document('modules').get();
-    return doc;
-  }
+      final uid = await Provider.of(context).auth.getCurrentUID();
+      Firestore.instance.collection('users').document(uid).collection('settings')
+          .document('modules').get().then((ds) {
+        _module1Controller.text = ds.data['module1'];
+         _module2Controller.text = ds.data['module2'];
+          _module3Controller.text = ds.data['module3'];
+           _module4Controller.text = ds.data['module4'];
+            _module5Controller.text = ds.data['module5'];
+        /// now _module1Controller.text contains the text from database....
+      });
+      
+    }
 
   TextEditingController _module1Controller = new TextEditingController();
     TextEditingController _module2Controller = new TextEditingController();
@@ -28,6 +44,7 @@ class _ModulesState extends State<Modules> {
     
   @override
   Widget build(BuildContext context) {
+    getModules();
     return Scaffold(
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
@@ -191,6 +208,7 @@ class _ModulesState extends State<Modules> {
           RaisedButton(
             onPressed: () async {        
              final uid = await Provider.of(context).auth.getCurrentUID();
+             final user = await FirebaseAuth.instance.currentUser();
 
               await Firestore.instance.collection("users").document(uid)
               .collection('settings').document('modules').setData({
@@ -205,7 +223,145 @@ class _ModulesState extends State<Modules> {
                         print("modules upload success!");
                       });
 
-                      //Navigator.of(context).pop();
+              await Firestore.instance.collection('users').document(uid)
+              .collection('my_modules_chats').document(_module1Controller.text)
+              .setData({
+                'code': _module1Controller.text,
+              }); // create private collection for module1
+
+              await Firestore.instance.collection('users').document(uid)
+              .collection('my_modules_chats').document(_module2Controller.text)
+              .setData({
+                'code': _module2Controller.text,
+              }); // create private collection for module2
+
+              await Firestore.instance.collection('users').document(uid)
+              .collection('my_modules_chats').document(_module3Controller.text)
+              .setData({
+                'code': _module3Controller.text,
+              }); // create private collection for module3
+
+              await Firestore.instance.collection('users').document(uid)
+              .collection('my_modules_chats').document(_module4Controller.text)
+              .setData({
+                'code': _module4Controller.text,
+              }); // create private collection for module4
+
+              await Firestore.instance.collection('users').document(uid)
+              .collection('my_modules_chats').document(_module5Controller.text)
+              .setData({
+                'code': _module5Controller.text,
+              }); // create private collection for module5
+
+              await Firestore.instance.collection(_module1Controller.text)
+              .add({
+                'text': 'Welcome to the ' + _module1Controller.text + ' Chatroom, ' + user.displayName + '!',
+                'createdAt': Timestamp.now(),
+                'userId': '',
+                'username': 'Admin',
+              }); // create public collection for module1
+
+              await Firestore.instance.collection(_module2Controller.text)
+              .add({
+                'text': 'Welcome to the ' + _module2Controller.text + ' Chatroom, ' + user.displayName + '!',
+                'createdAt': Timestamp.now(),
+                'userId': '',
+                'username': 'Admin',
+              }); // create public collection for module2
+
+              await Firestore.instance.collection(_module3Controller.text)
+              .add({
+                'text': 'Welcome to the ' + _module3Controller.text + ' Chatroom, ' + user.displayName + '!',
+                'createdAt': Timestamp.now(),
+                'userId': '',
+                'username': 'Admin',
+              }); // create public collection for module3
+
+              await Firestore.instance.collection(_module4Controller.text)
+              .add({
+                'text': 'Welcome to the ' + _module4Controller.text + ' Chatroom, ' + user.displayName + '!',
+                'createdAt': Timestamp.now(),
+                'userId': '',
+                'username': 'Admin',
+              }); // create public collection for module4
+
+              await Firestore.instance.collection(_module5Controller.text)
+              .add({
+                'text': 'Welcome to the ' + _module5Controller.text + ' Chatroom, ' + user.displayName + '!',
+                'createdAt': Timestamp.now(),
+                'userId': '',
+                'username': 'Admin',
+              }); // create public collection for module5
+
+               await Firestore.instance.collection(_module1Controller.text)
+               .getDocuments().then((querySnapshot) {
+                querySnapshot.documents.forEach((element) async { // element refers to each text
+                  await Firestore.instance.collection('users').document(uid)
+                  .collection('my_modules_chats').document(_module1Controller.text)
+                  .collection(_module1Controller.text).add({
+                    'text': element.data['text'],
+                    'createdAt': element.data['createdAt'],
+                    'userId': element.data['userId'],
+                    'username': element.data['username'],
+                  });
+                });
+              }); // update texts from public into private for module1
+
+               await Firestore.instance.collection(_module2Controller.text)
+               .getDocuments().then((querySnapshot) {
+                querySnapshot.documents.forEach((element) async { // element refers to each text
+                  await Firestore.instance.collection('users').document(uid)
+                  .collection('my_modules_chats').document(_module2Controller.text)
+                  .collection(_module2Controller.text).add({
+                    'text': element.data['text'],
+                    'createdAt': element.data['createdAt'],
+                    'userId': element.data['userId'],
+                    'username': element.data['username'],
+                  });
+                });
+              }); // update texts from public into private for module2
+
+               await Firestore.instance.collection(_module3Controller.text)
+               .getDocuments().then((querySnapshot) {
+                querySnapshot.documents.forEach((element) async { // element refers to each text
+                  await Firestore.instance.collection('users').document(uid)
+                  .collection('my_modules_chats').document(_module3Controller.text)
+                  .collection(_module3Controller.text).add({
+                    'text': element.data['text'],
+                    'createdAt': element.data['createdAt'],
+                    'userId': element.data['userId'],
+                    'username': element.data['username'],
+                  });
+                });
+              }); // update texts from public into private for module3
+
+               await Firestore.instance.collection(_module4Controller.text)
+               .getDocuments().then((querySnapshot) {
+                querySnapshot.documents.forEach((element) async { // element refers to each text
+                  await Firestore.instance.collection('users').document(uid)
+                  .collection('my_modules_chats').document(_module4Controller.text)
+                  .collection(_module4Controller.text).add({
+                    'text': element.data['text'],
+                    'createdAt': element.data['createdAt'],
+                    'userId': element.data['userId'],
+                    'username': element.data['username'],
+                  });
+                });
+              }); // update texts from public into private for module4
+
+               await Firestore.instance.collection(_module5Controller.text)
+               .getDocuments().then((querySnapshot) {
+                querySnapshot.documents.forEach((element) async { // element refers to each text
+                  await Firestore.instance.collection('users').document(uid)
+                  .collection('my_modules_chats').document(_module5Controller.text)
+                  .collection(_module5Controller.text).add({
+                    'text': element.data['text'],
+                    'createdAt': element.data['createdAt'],
+                    'userId': element.data['userId'],
+                    'username': element.data['username'],
+                  });
+                });
+              }); // update texts from public into private for module5
 
               final snackBar = SnackBar(
               content: Text('Uploading of modules is successful!'),

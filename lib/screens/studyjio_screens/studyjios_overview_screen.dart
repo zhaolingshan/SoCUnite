@@ -1,13 +1,13 @@
-import 'package:SoCUniteTwo/screens/studyjio_screens/joinedjios_listview_screen.dart';
-import 'package:SoCUniteTwo/screens/studyjio_screens/myjios_listview_screen.dart';
 import 'package:flutter/material.dart';
-//import 'package:provider/provider.dart';
 
 import 'package:SoCUniteTwo/screens/studyjio_screens/add_studyjio_screen.dart';
 import 'package:SoCUniteTwo/screens/studyjio_screens/studyjios_listview_screen.dart';
-import 'package:SoCUniteTwo/screens/studyjio_screens/studyjio_mapview_screen.dart';
-//import 'package:SoCUniteTwo/providers/studyjios.dart';
+import 'package:SoCUniteTwo/screens/studyjio_screens/myjios_mapview_screen.dart';
+import 'package:SoCUniteTwo/screens/studyjio_screens/joinedjios_mapview_screen.dart';
+import 'package:SoCUniteTwo/screens/studyjio_screens/studyjios_mapview_screen.dart';
 import 'package:SoCUniteTwo/providers/studyjio.dart';
+import 'package:SoCUniteTwo/screens/studyjio_screens/joinedjios_listview_screen.dart';
+import 'package:SoCUniteTwo/screens/studyjio_screens/myjios_listview_screen.dart';
 
 
 enum FilterOptions {
@@ -103,7 +103,11 @@ class _StudyjiosOverviewScreenState extends State<StudyjiosOverviewScreen> {
                 : showMine
                   ? MyjiosListviewScreen()
                   : StudyjiosListviewScreen(),
-              StudyjiosMapviewScreen(), 
+              showJoined
+                ? JoinedjiosMapviewScreen()
+                : showMine
+                  ? MyjiosMapviewScreen()
+                  : StudyjiosMapviewScreen(), 
             ],
           ),
         ),

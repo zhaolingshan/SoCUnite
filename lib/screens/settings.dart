@@ -187,15 +187,15 @@ class _SettingsState extends State<Settings> {
               ],),
           ),
           SizedBox(height: 20),
-          SwitchListTile(
-            activeColor: Colors.tealAccent,
-            title: Text("   Receive notifications",
-            style: TextStyle(color: Colors.grey[100], fontWeight: FontWeight.bold),
-            ),
-            value: true,
-            onChanged: (value) {}, //receive notifications
-            ),
-            SizedBox(height: 10),
+          // SwitchListTile(
+          //   activeColor: Colors.tealAccent,
+          //   title: Text("   Receive notifications",
+          //   style: TextStyle(color: Colors.grey[100], fontWeight: FontWeight.bold),
+          //   ),
+          //   value: true,
+          //   onChanged: (value) {}, //receive notifications
+          //   ),
+          SizedBox(height: 40),
             RaisedButton(
               onPressed: () {
                 FirebaseAuth.instance.signOut();

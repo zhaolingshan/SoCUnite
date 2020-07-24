@@ -1,4 +1,9 @@
+import 'package:SoCUniteTwo/screens/chat_screens/public_chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:SoCUniteTwo/providers/chat.dart';
+import 'package:SoCUniteTwo/widgets/provider_widget.dart';
 
 class AddChatroomScreen extends StatefulWidget {
   AddChatroomScreen({Key key}) : super(key: key);
@@ -7,10 +12,12 @@ class AddChatroomScreen extends StatefulWidget {
 }
 
 class _AddChatroomScreenState extends State<AddChatroomScreen> {
+  Chat chat;
+  PublicChatScreen chatScreen;
   final _form = GlobalKey<FormState>();
   final _descriptionFocusNode = FocusNode();
-  TextEditingController groupNameController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
 
   bool validate() {
     final form = _form.currentState;
@@ -42,7 +49,7 @@ class _AddChatroomScreenState extends State<AddChatroomScreen> {
                 TextFormField(
                   style: TextStyle(color: Colors.grey[100]),
                   cursorColor: Colors.tealAccent,
-                  controller: groupNameController,
+                  controller: _titleController,
                   decoration: InputDecoration(
                     labelText: 'Group Name',
                     labelStyle: TextStyle(color: Colors.grey[100]),
@@ -65,7 +72,7 @@ class _AddChatroomScreenState extends State<AddChatroomScreen> {
                 TextFormField(
                   style: TextStyle(color: Colors.grey[100]),
                   cursorColor: Colors.tealAccent,
-                  controller: descriptionController,
+                  controller: _descriptionController,
                   decoration: InputDecoration(
                     labelText: 'Description',
                     labelStyle: TextStyle(color: Colors.grey[100]),
@@ -88,7 +95,7 @@ class _AddChatroomScreenState extends State<AddChatroomScreen> {
                 ),
                 Padding(
                   child: Text(
-                    '* disclaimer: all group chats are public to all users.',
+                    '* disclaimer: all group chats created are public to all users.',
                     style: TextStyle(color: Colors.grey[100],),
                   ),
                   padding: const EdgeInsets.all(16.0),
@@ -98,9 +105,34 @@ class _AddChatroomScreenState extends State<AddChatroomScreen> {
                   child: Text(
                     'Confirm',
                   ),
-                  onPressed: () {
-                    validate();
-                    Navigator.pop(context);
+                  onPressed: () async {
+
+                    chat = Chat(null, null, null, null);
+                    if (validate()) {
+                      final uid = await Provider.of(context).auth.getCurrentUID();
+                      chat.title = _titleController.text;
+                      chat.description = _descriptionController.text;
+
+                      final DocumentReference documentReference = 
+                          await Firestore.instance.collection('public_chats')
+                          .add({
+                            'title': chat.title,
+                            'description': chat.description,
+                            'documentId': '',
+                            'ownerId': uid,
+                          });
+                        
+                      final String documentId = documentReference.documentID;
+                          chat.documentId = documentId;
+
+                      await Firestore.instance.collection('public_chats')
+                        .document(documentId)
+                        .updateData({
+                          'documentId': documentId,
+                        }); 
+                      
+                      Navigator.pop(context);
+                    }
                   }
                 ),
               ],

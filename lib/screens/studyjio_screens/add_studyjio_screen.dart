@@ -1,4 +1,8 @@
 // this screen is for both editing and adding a studyjio session
+//import 'dart:io';
+
+// import 'package:SoCUniteTwo/providers/studyjio_chat.dart';
+// import 'package:SoCUniteTwo/screens/chat_screens/studyjio_chat_screen.dart';
 import 'package:SoCUniteTwo/screens/studyjio_screens/book_a_room_screen.dart';
 import 'package:SoCUniteTwo/screens/studyjio_screens/choose_a_location_screen.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'dart:io';
 import 'package:SoCUniteTwo/providers/studyjio.dart';
+//import 'package:SoCUniteTwo/providers/chat.dart';
 import 'package:SoCUniteTwo/widgets/provider_widget.dart';
 import 'package:SoCUniteTwo/models/place.dart';
 
@@ -29,6 +34,7 @@ class AddStudyJioScreen extends StatefulWidget {
 }
 
 class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
+
   Studyjio studyjio;
   String username;
   bool _didUserChooseOnline = false;
@@ -306,6 +312,7 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                         setState(() {
                          _didUserChooseOnline = true; 
                          getLocation = 'Online';
+                         getLocationOnMap = GeoPoint(40.7128, 74.0060);
                         });
                       },
                     ),
@@ -346,7 +353,7 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                     color: Colors.blue[300],
                     child: Text("Confirm"),
                     onPressed: () async {
-                      studyjio = Studyjio(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+                      studyjio = Studyjio(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
                       final uid = await Provider.of(context).auth.getCurrentUID(); 
                       final DocumentSnapshot snapshot = await Firestore.instance.collection('users').document(uid).get();
                       String getUsername = snapshot.data['username'];
@@ -377,6 +384,8 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                         studyjio.location = getLocation;
                         studyjio.locationOnMap = getLocationOnMap;
                         studyjio.username = username;
+                        //studyjio.chat = Chat('', studyjio.title, studyjio.description);
+                        
 
                         final DocumentReference documentReference = 
                           await Firestore.instance.collection('browse_jios').add({
@@ -393,15 +402,17 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                             'currentCount':studyjio.currentCount,
                             'location':studyjio.location,
                             'username': studyjio.username,
-                            'locationOnMap': studyjio.locationOnMap, 
+                            'locationOnMap': studyjio.locationOnMap,
+                            //'chat': studyjio.chat, 
                           });
 
                         final String documentId = documentReference.documentID;
-                          studyjio.documentId = documentId;
+                          studyjio.documentId = documentId;      
 
                         await Firestore.instance.collection('browse_jios')
                           .document(documentId).updateData({
                             'documentId': documentId,
+                            //'chat': studyjio.chat,
                           });
 
                         await Firestore.instance.collection('users').document(uid).
@@ -419,9 +430,22 @@ class _AddStudyJioScreenState extends State<AddStudyJioScreen> {
                           'currentCount':studyjio.currentCount,
                           'location': studyjio.location,
                           'username': studyjio.username,
-                          'locationOnMap': studyjio.locationOnMap, 
+                          'locationOnMap': studyjio.locationOnMap,
+                     
+                          //'chat': studyjio.chat, 
                         });
                         
+                        await Firestore.instance.collection('users').document(uid)
+                        .collection('my_studyjios_chats').document(studyjio.title)
+                        .setData({
+                          'title': studyjio.title,
+                          'description':studyjio.description,
+                        });
+                        
+                        //studyjio.chatScreen = StudyjioChatScreen();  
+                        //StudyjioChatScreen.title = studyjio.title;
+                        //print(studyjio.chatScreen);
+
                         Navigator.of(context).pop();
                         _showAlertDialog();
                       }

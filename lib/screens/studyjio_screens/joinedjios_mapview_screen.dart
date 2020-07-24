@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:SoCUniteTwo/models/place.dart';
-// import 'package:SoCUniteTwo/providers/studyjio.dart';
-// import 'package:SoCUniteTwo/screens/studyjio_screens/add_studyjio_screen.dart';
 
-class StudyjiosMapviewScreen extends StatefulWidget {
+import 'package:SoCUniteTwo/widgets/provider_widget.dart';
+
+class JoinedjiosMapviewScreen extends StatefulWidget {
   final bool isSelecting;
 
-  StudyjiosMapviewScreen({
+  JoinedjiosMapviewScreen({
     this.isSelecting = false,
   });
 
   @override
-  _StudyjiosMapviewScreenState createState() => _StudyjiosMapviewScreenState();
+  _JoinedjiosMapviewScreenState createState() => _JoinedjiosMapviewScreenState();
 }
 
-class _StudyjiosMapviewScreenState extends State<StudyjiosMapviewScreen> {
+class _JoinedjiosMapviewScreenState extends State<JoinedjiosMapviewScreen> {
   //GoogleMapController _controller;
   //Stream<QuerySnapshot> allStudyjiosOnMap;
   List<Marker> allMarkers = [];
@@ -45,10 +44,7 @@ class _StudyjiosMapviewScreenState extends State<StudyjiosMapviewScreen> {
   //   allMarkers = _retrieveStudyjios();
   // });
   // }
-
-  
-
-    
+   
     //allStudyjiosOnMap = getUsersBrowseStudyjiosSnapshot(context);
     // Stream<QuerySnapshot> allStudyjiosOnMap = Firestore.instance
     //   .collection('browse_jios')
@@ -82,7 +78,10 @@ class _StudyjiosMapviewScreenState extends State<StudyjiosMapviewScreen> {
   // }  
 
   _retrieveStudyjios() async {
-    var result = await Firestore.instance.collection('browse_jios').getDocuments();
+    final uid = await Provider.of(context).auth.getCurrentUID();
+    var result = await Firestore.instance.collection('users').document(uid)
+    .collection('joined_studyjios')
+    .getDocuments();
     List<Marker> testMarkers = [];
     result.documents.forEach((element) {
       //print('BEFORE adding marker');
@@ -109,10 +108,6 @@ class _StudyjiosMapviewScreenState extends State<StudyjiosMapviewScreen> {
     return testMarkers;
   }
 
-  Stream<QuerySnapshot> getUsersBrowseStudyjiosSnapshot(BuildContext context) async* {
-    yield* Firestore.instance.collection('browse_jios').snapshots();
-  }
-  
  @override
   Widget build(BuildContext context) {
     //_retrieveStudyjios();

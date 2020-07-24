@@ -48,8 +48,8 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
     'COM1 B-14B',
     'COM1 B-14A',
   ];
-  String _chosenRoom = 'No chosen room';
-  Place _chosenPlace = Place(id: null, title: 'No chosen location', location: PlaceLocation(latitude: null, longitude: null));
+  String _chosenRoom = '';
+  Place _chosenPlace = Place(id: null, title: 'No chosen room', location: PlaceLocation(latitude: null, longitude: null));
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,8 +78,8 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
             child: ListTile(
               onTap: () {
                 setState(() {
-                  _chosenPlace = roomNames[0];
                   _chosenPlace.title = roomNames[0].title;
+                  _chosenPlace = roomNames[0];
                 });
               },
               title: Text(roomNames[0].title,
@@ -186,7 +186,7 @@ class _BookARoomScreenState extends State<BookARoomScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                _chosenRoom,
+                _chosenPlace.title,
                 style: TextStyle(fontSize: 17, color: Colors.tealAccent)
               ),
             ]

@@ -214,6 +214,8 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
                     });
                   }); //updating join
 
+                  await _leaveChat();
+
                   Navigator.of(context).pop(); 
                 },
               ),
@@ -266,6 +268,38 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
     });
   } 
 
+  _joinChat() async {
+    final uid = await Provider.of(context).auth.getCurrentUID(); 
+
+    await Firestore.instance.collection('users').document(uid)
+    .collection('my_studyjios_chats').document(widget.studyjio.title)
+    .setData({
+      'title': widget.studyjio.title,
+      'description':widget.studyjio.description,
+    });
+
+    await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
+    .collection('my_studyjios_chats').document(widget.studyjio.title)
+    .collection(widget.studyjio.title).getDocuments().then((querySnapshot) {
+      querySnapshot.documents.forEach((element) async { // element refers to each text
+        await Firestore.instance.collection('users').document(uid)
+        .collection('my_studyjios_chats').document(widget.studyjio.title)
+        .collection(widget.studyjio.title).add({
+          'text': element.data['text'],
+          'createdAt': element.data['createdAt'],
+          'userId': element.data['userId'],
+          'username': element.data['username'],
+        });
+      });
+    });
+  }
+
+  _leaveChat() async {
+    final uid = await Provider.of(context).auth.getCurrentUID(); 
+    await Firestore.instance.collection('users').document(uid)
+    .collection('my_studyjios_chats').document(widget.studyjio.title)
+    .delete();
+  }
   
   _switch() {
     var now = DateTime.now(); //DateTime
@@ -311,7 +345,7 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
               );
       }  
     } else { //is not mine
-        if(_isJoined) { //IF JOIN AND NOT MINE: if full -> display full and leave / if not full -> display leave 
+        if(_isJoined) { //IF JOIN AND NOT MINE: if full -> display full and leave / if not full -> display leave           
           return FutureBuilder(
                 future: Firestore.instance.collection('browse_jios').document(widget.studyjio.documentId).get(),
                 builder: (context, snapshot) {
@@ -434,6 +468,7 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
               .collection('my_studyjios').document(widget.studyjio.documentId)
               .setData({
                  'joinedUsers': widget.studyjio.joinedUsers,
+                 'locationOnMap': widget.studyjio.locationOnMap,
                 }, merge: true).then((_) {
                  print("joined uploaded to firebase");
                 }); // updating owner's collection
@@ -453,9 +488,11 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
               'joinedUsers': widget.studyjio.joinedUsers,
               'currentCount': widget.studyjio.currentCount,
               'location': widget.studyjio.location,
+              'locationOnMap': widget.studyjio.locationOnMap,
               'username': widget.studyjio.username,
             }); //uploading to my joined collection
 
+            await _joinChat();
             _showJoinDialog(); //does not handle firebase code
                             
                         },
@@ -476,111 +513,7 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
         }
     } 
   }
-                    
-                    
-                    
-                    
-                    
-                    
-                   
-  //             }
-  //         );
-  //       } else { //NOT MINE AND NOT JOINED: if full: display full / if not full: display join 
-  //           return FutureBuilder(
-  //               future: Firestore.instance.collection('browse_jios').document(widget.studyjio.documentId).get(),
-  //               builder: (context, snapshot) {
-  //                 if (snapshot.data != null) {
-  //                   if(snapshot.data['capacity'] == snapshot.data['joinedUsers'].values.where((e)=> e as bool).length) { //if full
-  //                     return Container(
-  //             child: Text(
-  //               'FULL',
-  //           style: TextStyle(color: Colors.grey[100]),
-  //           ),
-  //         );
-  //                   } else { //if not full
-  //                     return RaisedButton(
-  //                       color: Colors.tealAccent,
-  //                        child: Text(
-  //                         'JOIN',
-  //                         style: TextStyle(color: Colors.black),
-  //                       ), onPressed: () async {
-  //                         await _toggleJoinButton(); //from notJoined to not isjoin
-  //                             final uid = await Provider.of(context).auth.getCurrentUID();
-  //                             final DocumentSnapshot userSnapshot = await Firestore.instance.collection('users').document(uid).get();
-  //                             String getUsername = userSnapshot.data['username'];
-        
-  //                             widget.studyjio.joinedUsers.update(
-  //                             getUsername, (value) => _isJoined, 
-  //                             ifAbsent: () => _isJoined,
-  //                             );
-
-  //                         await Firestore.instance.collection('browse_jios')
-  //                         .document(widget.studyjio.documentId).setData({
-  //                           'joinedUsers': widget.studyjio.joinedUsers,
-  //                         }, merge: true).then((_) {
-  //                           print("joined uploaded to firebase");
-  //                         });  //updating browse collection
-
-  //                 await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
-  //             querySnapshot.documents.forEach((result) {
-  //               Firestore.instance.collection('users').document(result.documentID)
-  //               .collection('joined_studyjios').getDocuments().then((querySnapshot) {
-  //                 querySnapshot.documents.forEach((element) { 
-  //                   if (element.documentID == widget.studyjio.documentId) {
-  //                     Firestore.instance.collection('users').document(result.documentID) 
-  //                     .collection('joined_studyjios').document(element.documentID)
-  //                     .setData({
-  //                       'joinedUsers': widget.studyjio.joinedUsers,
-  //                     }, merge: true).then((_) {
-  //                       print("joined uploaded to firebase");
-  //                     });
-  //                   }
-  //                 });
-  //               });  
-  //             });
-  //           }); // updating to joined collection
-
-  //           await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
-  //             .collection('my_studyjios').document(widget.studyjio.documentId)
-  //             .setData({
-  //                'joinedUsers': widget.studyjio.joinedUsers,
-  //               }, merge: true).then((_) {
-  //                print("joined uploaded to firebase");
-  //               }); // updating owner's collection
-
-  //           await Firestore.instance.collection('users').document(uid)
-  //           .collection('joined_studyjios').document(widget.studyjio.documentId)
-  //           .setData({
-  //             'title': widget.studyjio.title,
-  //             'description': widget.studyjio.description,
-  //             'date': widget.studyjio.date,
-  //             'startTime': widget.studyjio.startTime,
-  //             'endTime': widget.studyjio.endTime,
-  //             'modules': widget.studyjio.modules,
-  //             'documentId': widget.studyjio.documentId,
-  //             'capacity': widget.studyjio.capacity,
-  //             'ownerId': widget.studyjio.ownerId,
-  //             'joinedUsers': widget.studyjio.joinedUsers,
-  //             'currentCount': widget.studyjio.currentCount,
-  //             'location': widget.studyjio.location,
-  //             'username': widget.studyjio.username,
-  //           }); //uploading to my joined collection
-
-  //           _showJoinDialog(); //does not handle firebase code
-                            
-  //                       },
-  //                     );
-  //                   }
-  //               } else {
-  //                 return CircularProgressIndicator();
-  //               }
-  //             }
-  //         );
-  //       }
-  //   }
-  // }
           
-  
   @override
   Widget build(BuildContext context) {
         return Container(
