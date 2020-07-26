@@ -106,6 +106,7 @@ class _MyPostsForumsState extends State<MyPostsForums> {
 
   Widget buildPrivateForums(BuildContext context, DocumentSnapshot post) {
     final forum = Post.fromSnapshot(post);
+    print(post['reported']);
     return Container(
       child: Card(
         color: Colors.grey[850],

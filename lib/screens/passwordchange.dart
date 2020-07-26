@@ -9,9 +9,10 @@ class PasswordChange extends StatefulWidget {
 }
 
 class _PasswordChangeState extends State<PasswordChange> {
+  final _form = GlobalKey<FormState>();
   
-  final formKey = GlobalKey<FormState>();
-  final formKey2 = GlobalKey<FormState>();
+  // final formKey = GlobalKey<FormState>();
+  // final formKey2 = GlobalKey<FormState>();
   String _newPassword;
   TextEditingController _oldPasswordController = new TextEditingController();
 
@@ -31,23 +32,15 @@ class _PasswordChangeState extends State<PasswordChange> {
   bool checkCurrentPasswordValid = true;
 
   bool validate() {
-    final form = formKey.currentState;
-    final form2 = formKey2.currentState;
+    final form = _form.currentState;
     form.save();
-    form2.save();
-    if(form.validate() && form2.validate()) {
+    if(form.validate()) {
       form.save();
-      form2.save();
       return true;
     } else {
       return false;
     }
   }
-
-  // void checkCurrentPassword() {
-
-  // }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -68,62 +61,72 @@ class _PasswordChangeState extends State<PasswordChange> {
         title: Text("Change password",)
     ),
     body: Builder(builder: (context) {
-      return Column(
-      children: <Widget>[
-        Form(
-          key: formKey2,
-          child:
+      return Container(
+        child: Padding(
+          padding: EdgeInsets.only(left: 15.0, top: 15.0),
+          child: Form(
+            key: _form,
+            child: Column(
+            children: <Widget>[
         TextFormField(
           cursorColor: Colors.tealAccent,
           controller: _oldPasswordController,
            decoration: InputDecoration(
-             focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.tealAccent,
-                              ),),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[800])),
-             labelStyle: TextStyle(color: Colors.grey[100]),
-             labelText: "   Current password",
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.tealAccent,
+              ),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey[800]
+              )
+            ),
+            labelStyle: TextStyle(color: Colors.grey[100]),
+            labelText: "   Current password",
             //  errorText: checkCurrentPasswordValid 
             //  ? null 
             //  : "Please re-enter your current password"
-           ),
-        validator: (value) {
-          if (value.isEmpty) {
-            return "Password field cannot be empty";
-          } else {
-            return null;
-          }
-        },
+          ),
+          validator: (value) {
+            if (value.isEmpty) {
+              return "Password field cannot be empty";
+            } else {
+              return null;
+            }
+          },
         style: TextStyle(fontSize: 18, color: Colors.grey[100]),
         obscureText: true,
-      ),),
-      Form(
-        key: formKey,
-        child:
-         TextFormField(
-           cursorColor: Colors.tealAccent,
-           decoration: InputDecoration(
-             focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.tealAccent,
-                              ),),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[800])),
-             
+        ),
+        TextFormField(
+          cursorColor: Colors.tealAccent,
+          decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.tealAccent,
+              ),
+            ),            
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey[800]
+              )
+            ),
              labelStyle: TextStyle(color: Colors.grey[100]),
              labelText: "   New password"
-           ),
-        validator: (value) {
-          if (value.isEmpty) {
-            return "Password field cannot be empty";
-          } else if (value.length < 6) {
-            return "Password has to be at least 6 characters long";
-          } else {
-            return null;
-          }
-        },
-        style: TextStyle(fontSize: 18, color: Colors.grey[100]),
-        obscureText: true,
-        onSaved: (value) => _newPassword = value,
-      ),),
+            ),
+            validator: (value) {
+              if (value.isEmpty) {
+                return "Password field cannot be empty";
+              } else if (value.length < 6) {
+                return "Password has to be at least 6 characters long";
+              } else {
+                return null;
+              }
+            },
+          style: TextStyle(fontSize: 18, color: Colors.grey[100]),
+          obscureText: true,
+          onSaved: (value) => _newPassword = value,
+        ),
       SizedBox(height: 40),
       RaisedButton(
               onPressed: () {
@@ -147,7 +150,10 @@ class _PasswordChangeState extends State<PasswordChange> {
                   ),
                 ),
               ),
-      ]
+            ]
+            )
+          )
+        )
     );
     })
     );

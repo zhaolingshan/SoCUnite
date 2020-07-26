@@ -24,6 +24,13 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
     });
   }
 
+  _leaveChat() async {
+    final uid = await Provider.of(context).auth.getCurrentUID(); 
+    await Firestore.instance.collection('users').document(uid)
+    .collection('my_studyjios_chats').document(widget.studyjio.title)
+    .delete();
+  }
+
   void _showJoinDialog() { //does not control database codes 
     showDialog(
       context: context,
@@ -193,6 +200,8 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
                   style: TextStyle(color: Colors.black),
                 ),
                 onPressed: () async { // user wants to delete
+                  final uid = await Provider.of(context).auth.getCurrentUID();
+
                   await Firestore.instance.collection('browse_jios').document(widget.studyjio.documentId)
                   .delete(); //deleting from browse collection
 
@@ -214,7 +223,11 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
                     });
                   }); //updating join
 
-                  await _leaveChat();
+                 // _leaveChat();
+
+                 await Firestore.instance.collection('users').document(uid)
+                  .collection('my_studyjios_chats').document(widget.studyjio.title)
+                  .delete();
 
                   Navigator.of(context).pop(); 
                 },
@@ -294,12 +307,6 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
     });
   }
 
-  _leaveChat() async {
-    final uid = await Provider.of(context).auth.getCurrentUID(); 
-    await Firestore.instance.collection('users').document(uid)
-    .collection('my_studyjios_chats').document(widget.studyjio.title)
-    .delete();
-  }
   
   _switch() {
     var now = DateTime.now(); //DateTime

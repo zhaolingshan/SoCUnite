@@ -51,7 +51,7 @@ class _ForumDetailsState extends State<ForumDetails> {
         'upvotes': widget.forum.upvotes,
         'saved': widget.forum.saved,
         'reported': widget.forum.reported,
-        'isResolved': isResolved,
+        'isResolved': widget.forum.isResolved,
       });
       print('added to saved_forums collection');
     } else {
@@ -145,6 +145,7 @@ class _ForumDetailsState extends State<ForumDetails> {
                 style: TextStyle(color: Colors.black),
               ),
               onPressed: () {
+                
                 Navigator.of(context).pop();
               },
             ),
@@ -232,6 +233,7 @@ class _ForumDetailsState extends State<ForumDetails> {
                 style: TextStyle(color: Colors.black),
               ),
               onPressed: () {
+                 
                 Navigator.of(context).pop();
               },
             ),
@@ -245,6 +247,7 @@ class _ForumDetailsState extends State<ForumDetails> {
   @override
   void initState() {
     super.initState();
+  
     Firestore.instance.collection('public').document('CS2030').collection('Forums')
     .document(widget.forum.documentid).get().then((value) async {
       final uid = await Provider.of(context).auth.getCurrentUID();
@@ -277,7 +280,8 @@ class _ForumDetailsState extends State<ForumDetails> {
            isUpvoted = value.data['upvotes'][uid]; 
            isResolved = value.data['isResolved'];
         });
-       print('set state upon opening page');
+        widget.forum.isResolved = isResolved;
+       print('set state for isResolved');
       }
     });
   }

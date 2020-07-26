@@ -50,7 +50,7 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
        'upvotes': widget.collaboration.upvotes,
         'saved': widget.collaboration.saved,
         'reported': widget.collaboration.reported,
-        'isResolved': isResolved,
+        'isResolved': widget.collaboration.isResolved //marked as available or closed
       });
       print('added to saved_collaborations collection');
     } else {
@@ -93,6 +93,8 @@ class _CollaborationDetailsState extends State<CollaborationDetails> {
            isUpvoted = value.data['upvotes'][uid];
            isResolved = value.data['isResolved'];
         });
+
+        widget.collaboration.isResolved = isResolved;
        print('set state upon opening page');
       }
     });

@@ -12,6 +12,12 @@ class Modules extends StatefulWidget {
 }
 
 class _ModulesState extends State<Modules> {
+  // String mod1;
+  // String mod2;
+  // String mod3;
+  // String mod4;
+  // String mod5;
+
   
   // getModules() async {
   //   final uid = await Provider.of(context).auth.getCurrentUID();
@@ -31,6 +37,14 @@ class _ModulesState extends State<Modules> {
             _module5Controller.text = ds.data['module5'];
         /// now _module1Controller.text contains the text from database....
       });
+
+      // setState(() {
+      //   mod1 = _module1Controller.text;
+      //   mod2 = _module2Controller.text;
+      //   mod3 = _module3Controller.text;
+      //   mod4 = _module4Controller.text;
+      //   mod5 = _module5Controller.text;
+      // });
       
     }
 
@@ -362,6 +376,26 @@ class _ModulesState extends State<Modules> {
                   });
                 });
               }); // update texts from public into private for module5
+
+              //updating modules for chats
+
+              // await Firestore.instance.collection('users').document(uid)
+              // .collection('my_modules_chats').document(mod1).delete();
+
+              // await Firestore.instance.collection('users').document(uid)
+              // .collection('my_modules_chats').document(mod2).delete();
+
+              // await Firestore.instance.collection('users').document(uid)
+              // .collection('my_modules_chats').document(mod3).delete();
+
+              //  await Firestore.instance.collection('users').document(uid)
+              // .collection('my_modules_chats').document(mod4).delete();
+
+              // await Firestore.instance.collection('users').document(uid)
+              // .collection('my_modules_chats').document(mod5).delete();
+              
+
+
 
               final snackBar = SnackBar(
               content: Text('Uploading of modules is successful!'),
