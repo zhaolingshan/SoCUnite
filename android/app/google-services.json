@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "540256440398",
+    "firebase_url": "https://socunitetwo-d815f.firebaseio.com",
+    "project_id": "socunitetwo-d815f",
+    "storage_bucket": "socunitetwo-d815f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540256440398:android:92daa7b4517422aa38f31f",
+        "android_client_info": {
+          "package_name": "com.example.SoCUniteTwo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "540256440398-idcfo0eivlbskecr5oa6v2uh2kr0shue.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAo6BL1NS41WYmKgMVweV0ut8vjEL_4Xxw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "540256440398-idcfo0eivlbskecr5oa6v2uh2kr0shue.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
