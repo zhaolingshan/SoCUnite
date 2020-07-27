@@ -12,12 +12,11 @@ class Modules extends StatefulWidget {
 }
 
 class _ModulesState extends State<Modules> {
-  // String mod1;
-  // String mod2;
-  // String mod3;
-  // String mod4;
-  // String mod5;
-
+  // String mod1 = '';
+  // String mod2 = '';
+  // String mod3 = '';
+  // String mod4 = '';
+  // String mod5 = '';
   
   // getModules() async {
   //   final uid = await Provider.of(context).auth.getCurrentUID();

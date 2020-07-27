@@ -72,134 +72,134 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
     });
   }
 
-  void _editTitleModalBottomSheet(BuildContext context) {
+  // void _editTitleModalBottomSheet(BuildContext context) {
 
-    TextEditingController _newTitleController = new TextEditingController();
+  //   TextEditingController _newTitleController = new TextEditingController();
 
-    showModalBottomSheet(
-      backgroundColor: Colors.grey[900],
-      context: context, 
-      builder: (BuildContext buildContext) {
-        return Container(
-          height: MediaQuery.of(context).size.height * .60,
-          child: Padding(
-            padding: EdgeInsets.only(left: 15.0, top: 15.0),
-            child: Form(
-              key: _form,
-              child: Column(
-                children: <Widget> [
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        "Edit Title", 
-                        style: TextStyle(
-                          color: Colors.grey[100],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                        ),
-                      Spacer(),
-                      IconButton(
-                        icon: Icon(Icons.cancel, color: Colors.white),
-                        color: Colors.blue[400],
-                        iconSize: 25,
-                        onPressed: () { 
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                  TextFormField(
-                    cursorColor: Colors.tealAccent,
-                    style: TextStyle(
-                    color: Colors.grey[100]),
-                    controller: _newTitleController,
-                    decoration: InputDecoration(
-                      labelText: 'Title', 
-                      labelStyle: TextStyle(color: Colors.grey[100]),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.tealAccent,),
-                      ),
-                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                    ),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter a title.';
-                      }
-                      return null; 
-                    },
-                  ),
-                  SizedBox(height: 20,),
-                  RaisedButton(
-                    color: Colors.blue[400],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
-                      child: Text(
-                        "Save", 
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold, fontSize: 15
-                        ),
-                      ),
-                    ),
-                    onPressed: () async {
-                      if (validate()) {
-                        await Firestore.instance.collection('browse_jios')
-                        .document(widget.studyjio.documentId)
-                        .setData({
-                          'title': _newTitleController.text,
-                        }, merge: true).then((_) {
-                       });
+  //   showModalBottomSheet(
+  //     backgroundColor: Colors.grey[900],
+  //     context: context, 
+  //     builder: (BuildContext buildContext) {
+  //       return Container(
+  //         height: MediaQuery.of(context).size.height * .60,
+  //         child: Padding(
+  //           padding: EdgeInsets.only(left: 15.0, top: 15.0),
+  //           child: Form(
+  //             key: _form,
+  //             child: Column(
+  //               children: <Widget> [
+  //                 Row(
+  //                   children: <Widget>[
+  //                     Text(
+  //                       "Edit Title", 
+  //                       style: TextStyle(
+  //                         color: Colors.grey[100],
+  //                         fontWeight: FontWeight.bold,
+  //                         fontSize: 18,
+  //                       ),
+  //                       ),
+  //                     Spacer(),
+  //                     IconButton(
+  //                       icon: Icon(Icons.cancel, color: Colors.white),
+  //                       color: Colors.blue[400],
+  //                       iconSize: 25,
+  //                       onPressed: () { 
+  //                         Navigator.of(context).pop();
+  //                       },
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 TextFormField(
+  //                   cursorColor: Colors.tealAccent,
+  //                   style: TextStyle(
+  //                   color: Colors.grey[100]),
+  //                   controller: _newTitleController,
+  //                   decoration: InputDecoration(
+  //                     labelText: 'Title', 
+  //                     labelStyle: TextStyle(color: Colors.grey[100]),
+  //                     focusedBorder: UnderlineInputBorder(
+  //                       borderSide: BorderSide(color: Colors.tealAccent,),
+  //                     ),
+  //                     enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+  //                   ),
+  //                   validator: (value) {
+  //                     if (value.isEmpty) {
+  //                       return 'Please enter a title.';
+  //                     }
+  //                     return null; 
+  //                   },
+  //                 ),
+  //                 SizedBox(height: 20,),
+  //                 RaisedButton(
+  //                   color: Colors.blue[400],
+  //                   shape: RoundedRectangleBorder(
+  //                     borderRadius: BorderRadius.circular(50)
+  //                   ),
+  //                   child: Padding(
+  //                     padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+  //                     child: Text(
+  //                       "Save", 
+  //                       style: TextStyle(
+  //                         color: Colors.white,
+  //                         fontWeight: FontWeight.bold, fontSize: 15
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   onPressed: () async {
+  //                     if (validate()) {
+  //                       await Firestore.instance.collection('browse_jios')
+  //                       .document(widget.studyjio.documentId)
+  //                       .setData({
+  //                         'title': _newTitleController.text,
+  //                       }, merge: true).then((_) {
+  //                      });
 
-                        await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
-                        .collection('my_studyjios').document(widget.studyjio.documentId)
-                        .setData({
-                          'title': _newTitleController.text,
-                        }, merge: true).then((_) {
-                       });
+  //                       await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
+  //                       .collection('my_studyjios').document(widget.studyjio.documentId)
+  //                       .setData({
+  //                         'title': _newTitleController.text,
+  //                       }, merge: true).then((_) {
+  //                      });
 
-                          await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
-                    querySnapshot.documents.forEach((result) {
-                      Firestore.instance.collection('users').document(result.documentID)
-                      .collection('joined_studyjios').getDocuments().then((querySnapshot) {
-                        querySnapshot.documents.forEach((element) { 
-                          if (element.documentID == widget.studyjio.documentId) {
-                            Firestore.instance.collection('users').document(result.documentID) 
-                            .collection('joined_studyjios').document(element.documentID)
-                            .setData({
-                               'title': _newTitleController.text,
-                            }, merge: true).then((_) {
-                              print("joined uploaded to firebase");
-                            });
-                          }
-                        });
-                      });  
-                    });
-                  }); //updating joined collection
+  //                         await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+  //                   querySnapshot.documents.forEach((result) {
+  //                     Firestore.instance.collection('users').document(result.documentID)
+  //                     .collection('joined_studyjios').getDocuments().then((querySnapshot) {
+  //                       querySnapshot.documents.forEach((element) { 
+  //                         if (element.documentID == widget.studyjio.documentId) {
+  //                           Firestore.instance.collection('users').document(result.documentID) 
+  //                           .collection('joined_studyjios').document(element.documentID)
+  //                           .setData({
+  //                              'title': _newTitleController.text,
+  //                           }, merge: true).then((_) {
+  //                             print("joined uploaded to firebase");
+  //                           });
+  //                         }
+  //                       });
+  //                     });  
+  //                   });
+  //                 }); //updating joined collection
 
 
-                        Navigator.pop(context);
-                        String snackBarTitle = 'New title: ' + _newTitleController.text;
-                        final snackBar = SnackBar(
-                        content: Text(snackBarTitle, overflow: TextOverflow.ellipsis, maxLines: 2),
-                        duration: Duration(seconds: 5),
-                      );
+  //                       Navigator.pop(context);
+  //                       String snackBarTitle = 'New title: ' + _newTitleController.text;
+  //                       final snackBar = SnackBar(
+  //                       content: Text(snackBarTitle, overflow: TextOverflow.ellipsis, maxLines: 2),
+  //                       duration: Duration(seconds: 5),
+  //                     );
 
-                      Scaffold.of(context).showSnackBar(snackBar);
-                      }
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      }
-    );
-  }
+  //                     Scaffold.of(context).showSnackBar(snackBar);
+  //                     }
+  //                   },
+  //                 )
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //   );
+  // }
 
   void _editDescriptionModalBottomSheet(BuildContext context) {
     TextEditingController _newDescriptionController = new TextEditingController();
@@ -1231,22 +1231,22 @@ class _StudyjioDetailScreenState extends State<StudyjioDetailScreen> {
                         ),
                       ),
                       Spacer(),
-                      FutureBuilder(
-                        future: getUID(), //returns uid
-                        builder: (context, AsyncSnapshot snapshot) {
-                        if (snapshot.data == widget.studyjio.ownerId) {
-                          return  IconButton(
-                            color: Colors.tealAccent,
-                            icon: Icon(Icons.edit),
-                            onPressed: () {    
-                              _editTitleModalBottomSheet(context);               
-                            }
-                          );
-                        } else {
-                          return Container();
-                        }
-                      },
-                      )
+                      // FutureBuilder(
+                      //   future: getUID(), //returns uid
+                      //   builder: (context, AsyncSnapshot snapshot) {
+                      //   if (snapshot.data == widget.studyjio.ownerId) {
+                      //     return  IconButton(
+                      //       color: Colors.tealAccent,
+                      //       icon: Icon(Icons.edit),
+                      //       onPressed: () {    
+                      //         _editTitleModalBottomSheet(context);               
+                      //       }
+                      //     );
+                      //   } else {
+                      //     return Container();
+                      //   }
+                      // },
+                      // )
                     ],
                   ),
                   SizedBox(height:10),

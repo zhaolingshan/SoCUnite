@@ -88,6 +88,7 @@ class _MyjiosChatsListviewScreenState extends State<MyjiosChatsListviewScreen> {
                           child: Row(
                             children: <Widget>[
                               SizedBox(width: 20,),
+                              //Expanded(child:
                               Text(
                                 description, 
                                 style: TextStyle(
@@ -97,6 +98,7 @@ class _MyjiosChatsListviewScreenState extends State<MyjiosChatsListviewScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                               ),
+                              //),
                             ],
                           ),
                         ),

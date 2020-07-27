@@ -101,11 +101,14 @@ class _StudyjiosChatsListviewScreenState extends State<StudyjiosChatsListviewScr
                           ),
                         ),
                         SizedBox(height: 20,),
+                        //Expanded(child:
                         Padding(
                           padding: EdgeInsets.only(top: 0, bottom: 0),
-                          child: Row(
+                          child: 
+                          Row(
                             children: <Widget>[
                               SizedBox(width: 20,),
+                              //Flexible(child: 
                               Text(
                                 description, 
                                 style: TextStyle(
@@ -113,11 +116,13 @@ class _StudyjiosChatsListviewScreenState extends State<StudyjiosChatsListviewScr
                                   color: Colors.grey[100],
                                 ),
                                 overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
+                                maxLines: 1,
                               ),
+                              //),
                             ],
                           ),
                         ),
+                        //),
                         SizedBox(height: 10,),
                       ],
                     ),

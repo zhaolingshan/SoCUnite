@@ -24,12 +24,12 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
     });
   }
 
-  _leaveChat() async {
-    final uid = await Provider.of(context).auth.getCurrentUID(); 
-    await Firestore.instance.collection('users').document(uid)
-    .collection('my_studyjios_chats').document(widget.studyjio.title)
-    .delete();
-  }
+  // _leaveChat() async {
+  //   final uid = await Provider.of(context).auth.getCurrentUID(); 
+  //   await Firestore.instance.collection('users').document(uid)
+  //   .collection('my_studyjios_chats').document(widget.studyjio.title)
+  //   .delete();
+  // }
 
   void _showJoinDialog() { //does not control database codes 
     showDialog(
@@ -155,6 +155,13 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
                   .collection('joined_studyjios').document(widget.studyjio.documentId).delete();
                   print('DELETED'); // deleting from my joined collection
 
+                  //deleting studyjios chat
+                await Firestore.instance.collection('users').document(uid)
+                .collection('my_studyjios_chats').document(widget.studyjio.title)
+                .delete();
+
+
+
                 Navigator.of(context).pop(); // remove alert
                 },
               ),
@@ -175,79 +182,79 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
     );
   }
 
-  void _showDeleteDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Padding(
-   padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 20, bottom: 20),
-   child: AlertDialog(
-            backgroundColor: Colors.grey[850],
-            title: new Text(
-              "Confirmation",
-              style: TextStyle(color: Colors.blue[300]),
-              ),
-            content: Text(
-              "Are you sure you want to delete the study-jio you have created?",
-              style: TextStyle(color: Colors.grey[100]),
-            ),      
-            actions: <Widget>[
-              // buttons at the bottom of the dialog
-              new FlatButton(
-                color: Colors.blue[300],
-                child: new Text(
-                  "Yes",
-                  style: TextStyle(color: Colors.black),
-                ),
-                onPressed: () async { // user wants to delete
-                  final uid = await Provider.of(context).auth.getCurrentUID();
+  // void _showDeleteDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Padding(
+  //  padding: EdgeInsets.only(left: 50.0, right: 50.0, top: 20, bottom: 20),
+  //  child: AlertDialog(
+  //           backgroundColor: Colors.grey[850],
+  //           title: new Text(
+  //             "Confirmation",
+  //             style: TextStyle(color: Colors.blue[300]),
+  //             ),
+  //           content: Text(
+  //             "Are you sure you want to delete the study-jio you have created?",
+  //             style: TextStyle(color: Colors.grey[100]),
+  //           ),      
+  //           actions: <Widget>[
+  //             // buttons at the bottom of the dialog
+  //             new FlatButton(
+  //               color: Colors.blue[300],
+  //               child: new Text(
+  //                 "Yes",
+  //                 style: TextStyle(color: Colors.black),
+  //               ),
+  //               onPressed: () async { // user wants to delete
+  //                 final uid = await Provider.of(context).auth.getCurrentUID();
 
-                  await Firestore.instance.collection('browse_jios').document(widget.studyjio.documentId)
-                  .delete(); //deleting from browse collection
+  //                 await Firestore.instance.collection('browse_jios').document(widget.studyjio.documentId)
+  //                 .delete(); //deleting from browse collection
 
-                  await Firestore.instance.collection('users').document(widget.studyjio.ownerId)
-                  .collection('my_studyjios').document(widget.studyjio.documentId).delete(); //deleting from my collection
+  //                 await Firestore.instance.collection('users').document(uid)
+  //                 .collection('my_studyjios').document(widget.studyjio.documentId).delete(); //deleting from my collection
 
-                  await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
-                    querySnapshot.documents.forEach((result) {
-                      Firestore.instance.collection('users').document(result.documentID)
-                      .collection('joined_studyjios').getDocuments().then((querySnapshot) {
-                        querySnapshot.documents.forEach((element) { 
-                          if (element.documentID == widget.studyjio.documentId) {
-                            Firestore.instance.collection('users').document(result.documentID) 
-                            .collection('joined_studyjios').document(element.documentID)
-                            .delete(); //deleting from joined collection
-                          }
-                        });
-                      });  
-                    });
-                  }); //updating join
+  //                 await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+  //                   querySnapshot.documents.forEach((result) {
+  //                     Firestore.instance.collection('users').document(result.documentID)
+  //                     .collection('joined_studyjios').getDocuments().then((querySnapshot) {
+  //                       querySnapshot.documents.forEach((element) { 
+  //                         if (element.documentID == widget.studyjio.documentId) {
+  //                           Firestore.instance.collection('users').document(result.documentID) 
+  //                           .collection('joined_studyjios').document(element.documentID)
+  //                           .delete(); //deleting from joined collection
+  //                         }
+  //                       });
+  //                     });  
+  //                   });
+  //                 }); //updating join
 
-                 // _leaveChat();
+  //                // _leaveChat();
 
-                 await Firestore.instance.collection('users').document(uid)
-                  .collection('my_studyjios_chats').document(widget.studyjio.title)
-                  .delete();
+  //                await Firestore.instance.collection('users').document(uid)
+  //                 .collection('my_studyjios_chats').document(widget.studyjio.title)
+  //                 .delete();
 
-                  Navigator.of(context).pop(); 
-                },
-              ),
-              new FlatButton(
-                color: Colors.blue[300],
-                child: new Text(
-                  "No",
-                  style: TextStyle(color: Colors.black),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-        ),
-        );
-      },
-    );
-  }
+  //                 Navigator.of(context).pop(); 
+  //               },
+  //             ),
+  //             new FlatButton(
+  //               color: Colors.blue[300],
+  //               child: new Text(
+  //                 "No",
+  //                 style: TextStyle(color: Colors.black),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //               },
+  //             ),
+  //           ],
+  //       ),
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   void initState() {
@@ -336,8 +343,44 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
             color: Colors.tealAccent,
             size: 30,
           ), 
-          onPressed: ()  {
-            _showDeleteDialog();
+          onPressed: () async {
+            //_showDeleteDialog();
+
+            final uid = await Provider.of(context).auth.getCurrentUID();
+
+            await Firestore.instance.collection('browse_jios').document(widget.studyjio.documentId)
+                  .delete().then((_) {
+                    print('deleted studyjio from browse');
+                  }); //deleting from browse collection
+
+                  await Firestore.instance.collection('users').document(uid)
+                  .collection('my_studyjios').document(widget.studyjio.documentId).delete()
+                  .then((_) {
+                    print('deleted from my_jios listview');
+                  }); //deleting from my collection
+
+                  await Firestore.instance.collection('users').document(uid)
+                  .collection('my_studyjios_chats').document(widget.studyjio.title)
+                  .delete().then((_) {
+                    print('deleted studyjio chats');
+                  });
+
+                  await Firestore.instance.collection('users').getDocuments().then((querySnapshot) {
+                    querySnapshot.documents.forEach((result) {
+                      Firestore.instance.collection('users').document(result.documentID)
+                      .collection('joined_studyjios').getDocuments().then((querySnapshot) {
+                        querySnapshot.documents.forEach((element) { 
+                          if (element.documentID == widget.studyjio.documentId) {
+                            Firestore.instance.collection('users').document(result.documentID) 
+                            .collection('joined_studyjios').document(element.documentID)
+                            .delete(); //deleting from joined collection
+                          }
+                        });
+                      });  
+                    });
+                  }); //updating join
+
+                 // _leaveChat();
           }
         );
       } else if((difference > 0) && (difference <= 30)) {

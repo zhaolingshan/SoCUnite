@@ -92,6 +92,7 @@ class _ModulesChatsListviewScreenState extends State<ModulesChatsListviewScreen>
                           child: Row(
                             children: <Widget>[
                               SizedBox(width: 20,),
+                              //Expanded(child:
                               Text(
                                 description, 
                                 style: TextStyle(
@@ -101,6 +102,7 @@ class _ModulesChatsListviewScreenState extends State<ModulesChatsListviewScreen>
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                               ),
+                              //),
                             ],
                           ),
                         ),
