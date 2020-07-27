@@ -166,7 +166,7 @@ class _MyjiosListviewScreenState extends State<MyjiosListviewScreen> {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  "/",
+                                  " / ",
                                   style: TextStyle(
                                     fontSize: 14, 
                                     color: Colors.grey[100]

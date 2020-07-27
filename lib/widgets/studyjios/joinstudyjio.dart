@@ -273,8 +273,10 @@ class _JoinStudyjioState extends State<JoinStudyjio> {
         .setData({
           'joinedUsers': widget.studyjio.joinedUsers,
          }, merge: true).then((_) {
+           print('mark this user as false join');
         });
-      } if (widget.studyjio.ownerId == uid) {
+      } 
+      if (widget.studyjio.ownerId == uid) {
         setState(() {
           _isMine = true;
           JoinStudyjio.isCreatedByUser = _isMine;
